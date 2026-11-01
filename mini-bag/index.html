@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAISON &amp;. COLOR STUDIO | メゾンアンパサンドカラースタジオ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#292725;--muted:#7e7870;--line:#e5dfd6;--accent:#94785e;--page:#ffffff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--page);color:var(--ink);font-family:"Hiragino Sans","Yu Gothic",sans-serif}button{font:inherit}
+body{padding:32px 28px 56px}.shell{max-width:1440px;margin:auto}
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);padding:8px 4px 22px;margin-bottom:24px}.brand{font-family:Georgia,"Times New Roman",serif;letter-spacing:.08em;font-size:clamp(24px,3vw,40px)}.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.atelier{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(360px,.8fr);gap:24px;align-items:start}
+.stage-card{padding:0;position:sticky;top:12px;z-index:5}
+.stage-head{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:0 2px 10px}.stage-head h1{font-family:Georgia,serif;font-size:24px;font-weight:400;margin:0}
+.canvas-wrap{position:relative;border-radius:17px;overflow:hidden;background:#fff;border:1px solid var(--line)}
+.view{margin:0;padding:4% 5% 3%;display:grid;place-items:center}.view canvas{display:block;max-width:100%;max-height:min(68vh,720px);width:auto;height:auto}
+.view figcaption{text-align:center;font-size:11px;color:var(--muted);margin-top:10px;letter-spacing:.04em}
+.stage-loading{position:absolute;inset:0;display:grid;place-items:center;background:rgba(255,255,255,.72);backdrop-filter:blur(5px);color:var(--muted);font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s}.stage-loading.show{opacity:1}
+.stage-foot{display:flex;justify-content:flex-end;align-items:center;padding:8px 2px 0;gap:12px;color:var(--muted);font-size:11px}.stage-foot button{border:0;background:transparent;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.controls{display:grid;gap:14px}.control-card h2{font-family:Georgia,serif;font-size:20px;font-weight:400;margin:0 0 12px}
+.part-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.part{border:1px solid var(--line);border-radius:17px;padding:13px;background:#fff}
+.part-label,.metal-title{display:block;color:var(--ink);font-size:12px;font-weight:500;margin-bottom:6px}.metal-title{margin-bottom:8px}
+.material-label{display:block;font-size:11px;color:var(--muted);margin-top:12px;letter-spacing:.04em}
+.swatches{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:8px}
+.swatch{min-width:0;border:none;border-radius:12px;aspect-ratio:1/1;padding:0;position:relative;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),0 2px 6px rgba(0,0,0,.16);transition:transform .15s ease,box-shadow .15s ease}
+.swatch:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),0 6px 12px rgba(0,0,0,.18)}
+.swatch[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink),0 2px 6px rgba(0,0,0,.16)}
+.swatch[aria-pressed="true"]::after{content:"";position:absolute;inset:5px;border:2px solid rgba(255,255,255,.95);border-radius:9px}
+.control-row{display:flex;gap:10px;flex-wrap:wrap}
+.toggle{flex:1;min-width:88px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;text-align:center;cursor:pointer;color:var(--muted);transition:all .16s}.toggle strong{display:block;color:var(--ink);font-size:12px;font-weight:500}
+.toggle small{display:block;font-size:10px;margin-top:2px;color:var(--muted)}
+.toggle[aria-pressed="true"]{border-color:var(--accent);background:#f5eee6;color:var(--accent);box-shadow:0 8px 18px rgba(148,120,94,.1)}
+.product-row .product-col{flex:1;min-width:120px;display:flex;flex-direction:column;align-items:center;gap:8px}.product-row .product-col .toggle{width:100%;min-width:0}
+.product-row .official-link{margin:0;font-size:11px;line-height:1.6;text-align:center}.product-row .official-link span{display:inline-block;text-decoration:underline;text-underline-offset:3px}
+.metal-box{border:1px solid var(--line);border-radius:17px;padding:13px;background:#fff;margin-top:12px}
+.metal-box[hidden],.part[hidden]{display:none}
+.toggle .nb{display:block}
+.toggle .pl{display:inline}
+@media(max-width:640px){.product-row .toggle .pl{display:block}.product-row .toggle strong.sm{font-size:11px}}
+.handle-inset{position:absolute;left:0;top:0;width:200px;margin:0;padding:8px 8px 6px;background:rgba(255,255,255,.92);border:solid var(--line);border-width:0 1px 1px 0;border-radius:16px 0 12px 0;z-index:2}.handle-inset[hidden]{display:none}.handle-inset canvas{display:block;width:100%;height:auto}.handle-inset figcaption{text-align:center;font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:.04em}
+.summary{border:1px solid var(--line);border-radius:17px;padding:13px;background:#fff;margin-top:12px}.summary-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.note{font-size:11px;line-height:1.7;color:var(--muted);margin:10px 0 0}.summary p{font-size:12px;line-height:1.8;margin:0;color:var(--muted)}.summary b{color:var(--ink);font-weight:500;font-size:12px}
+.copy{border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#fff;cursor:pointer;color:var(--accent);white-space:nowrap}
+:root{--display-font:Cinzel,"Trajan Pro","Cormorant Garamond",Georgia,serif}
+.brand{font-family:var(--display-font);font-weight:400;letter-spacing:.06em;font-size:clamp(20px,3.4vw,40px);line-height:1.15;color:#111;text-transform:uppercase}
+.brand .amp{letter-spacing:.08em}.brand .dot{margin-left:.02em}
+.stage-head h1,.control-card h2{font-family:var(--display-font);letter-spacing:.05em;color:#111}
+.stage-head h1{font-size:21px}.control-card h2{font-size:18px;margin:0 0 4px}
+.official-link{display:inline-block;font-size:12px;color:var(--accent);text-decoration:underline;text-underline-offset:3px;margin:8px 0 14px}
+.note{white-space:pre-line}.note[hidden]{display:none}
+@media(max-width:980px){body{padding:18px 14px 36px}.atelier{grid-template-columns:1fr}.stage-card{top:0;background:var(--page);padding-top:8px;margin:0 -14px;padding-left:14px;padding-right:14px;padding-bottom:8px;box-shadow:0 6px 10px -8px rgba(0,0,0,.25)}.view canvas{max-height:38vh}}
+@media(max-width:640px){.masthead{display:block}.stage-head h1{font-size:18px}.stage-head{padding-bottom:6px}.view figcaption{margin-top:6px;font-size:10px}.copy{margin-top:10px}.product-row .product-col{min-width:0}.product-row .toggle{padding:10px 6px}.product-row .official-link{font-size:10px}}
+#summaryText .w{display:inline-block}
+#summaryNote{margin-top:22px}
+#summaryText .item{display:block;padding-left:1em;text-indent:-1em}#summaryText .mk{display:inline-block;width:1em;text-indent:0}#summaryText .w{text-indent:0}#summaryText .hd{white-space:nowrap}
+</style>
+<style id="studio-nav-style">
+.masthead{flex-wrap:wrap}.studio-nav{flex:0 0 100%;display:flex;flex-wrap:wrap;gap:6px 20px;padding-top:10px;font-size:13px;line-height:1.6}.studio-nav a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}.studio-nav span{color:var(--ink);font-weight:600}@media (max-width:640px){.studio-nav{flex-wrap:nowrap;justify-content:space-between;gap:6px;white-space:nowrap;font-size:clamp(10px,3.3vw,13px)}}
+</style></head>
+<body>
+<div class="shell">
+<header class="masthead">
+  <div><div class="brand">MAISON <span class="amp">&amp;<span class="dot">.</span></span>&#8201; COLOR STUDIO</div></div>
+<nav class="studio-nav" aria-label="スタジオの切り替え"><a href="../charm/charms.html">チャーム</a><a href="../nametag/">ネームタグ</a><a href="../mini-wallet/">ミニウォレット</a><span aria-current="page">ツイストシリーズ</span></nav></header>
+<main class="atelier">
+  <section class="stage-card">
+    <div class="stage-head"><div><h1>Preview</h1></div></div>
+    <div class="canvas-wrap">
+      <figure class="view"><canvas id="view" aria-label="プレビュー"></canvas></figure>
+      <figure class="handle-inset" id="handleInset" hidden><canvas id="handleCanvas" width="480" height="150" aria-label="ハンドルを上から見た図"></canvas><figcaption>ハンドル（上から）</figcaption></figure>
+      <div id="loading" class="stage-loading show">素材を読み込んでいます…</div>
+    </div>
+    <div class="stage-foot"><button id="copySummaryTop" type="button">選択内容をコピー</button></div>
+  </section>
+  <aside class="controls">
+    <section class="control-card"><h2>Color selection</h2>
+      <div class="metal-box" style="margin-top:0"><div class="metal-title">アイテム</div><div class="control-row product-row" id="productControls"></div></div>
+      <div class="part-grid" style="margin-top:12px">
+        
+        <div class="part" id="bodyPart" hidden><span class="part-label">本体</span><div id="bodySwatches"></div></div>
+        <div class="part"><span class="part-label" id="mainPartLabel">カラー</span><div id="leatherSwatches"></div></div>
+      </div>
+      <div class="metal-box" id="handleBox" hidden><div class="metal-title">ハンドル</div><div class="control-row" id="handleControls"></div><p class="note" id="handleNote" hidden>※クロコハンドルはオプションです</p></div>
+      
+      <div class="metal-box" id="stitchBox"><div class="metal-title">ステッチ</div><div class="control-row" id="stitchControls"></div><p class="note" id="stitchNote" hidden>※黒ステッチはオプションです</p></div>
+      <div class="metal-box"><div class="metal-title">金具カラー</div><div class="control-row" id="metalControls"></div></div>
+      <div class="metal-box" id="hookBox"><div class="metal-title">フック取り付け</div><div class="control-row" id="hookControls"></div><p class="note" id="hookNote" hidden>※フック取り付けはオプションです</p></div>
+      <div class="metal-box"><div class="metal-title">チェーン</div><div class="control-row" id="chainControls"></div><p class="note" id="chainNote" hidden>※チェーンはオプションです</p></div>
+      <div class="summary"><div class="summary-row"><p id="summaryText"></p><button id="copySummary" class="copy" type="button">コピー</button></div><p class="note" id="summaryNote">※コピーはメモとしてお使いください。</p></div>
+    </section>
+  </aside>
+</main>
+</div>
+<script>
+"use strict";
+const COLORS=[{"key": "black", "label": "ブラック", "hex": "#262522"}, {"key": "brick", "label": "ブリック", "hex": "#712926"}, {"key": "brown", "label": "ブラウン", "hex": "#ab6b58"}, {"key": "charcoal-gray", "label": "チャコールグレー", "hex": "#444345"}, {"key": "ciel-blue", "label": "シエルブルー", "hex": "#56aac8"}, {"key": "coral-pink", "label": "コーラルピンク", "hex": "#ff8870"}, {"key": "etoupe", "label": "エトープ", "hex": "#765a43"}, {"key": "gold", "label": "ゴールド", "hex": "#a65c2b"}, {"key": "greige", "label": "グレージュ", "hex": "#5c4c44"}, {"key": "ice-gray", "label": "アイスグレー", "hex": "#a5a5a5"}, {"key": "ivory", "label": "アイボリー", "hex": "#f3e9d3"}, {"key": "light-blue", "label": "ライトブルー", "hex": "#83e8e2"}, {"key": "lime-yellow", "label": "ライムイエロー", "hex": "#e5dc22"}, {"key": "mist-blue", "label": "ミストブルー", "hex": "#5e95a4"}, {"key": "navy", "label": "ネイビー", "hex": "#003d55"}, {"key": "orange", "label": "オレンジ", "hex": "#e98526"}, {"key": "pale-pink", "label": "ペールピンク", "hex": "#ffcae8"}, {"key": "pale-yellow", "label": "ペールイエロー", "hex": "#fcf1a4"}, {"key": "pink", "label": "ピンク", "hex": "#ff5979"}, {"key": "pistachio", "label": "ピスタチオ", "hex": "#a7b98a"}, {"key": "purple", "label": "パープル", "hex": "#752472"}, {"key": "red", "label": "レッド", "hex": "#a20028"}, {"key": "royal-blue", "label": "ロイヤルブルー", "hex": "#0040c2"}, {"key": "chevre:green", "label": "グリーン", "hex": "#218348", "material": "chevre"}, {"key": "chevre:light-green", "label": "ライトグリーン", "hex": "#75aa5e", "material": "chevre"}, {"key": "chevre:khaki", "label": "カーキ", "hex": "#64684b", "material": "chevre"}, {"key": "chevre:pale-greige", "label": "ペールグレージュ", "hex": "#988981", "material": "chevre"}, {"key": "chevre:lavender", "label": "ラベンダー", "hex": "#747de8", "material": "chevre"}];
+const MATERIALS={calf:"カーフ",chevre:"シェーブル"};
+const matOf=c=>c.material||"calf";
+const VIEWS={"minibag": {"base": "assets/minibag.base.png?v=3bea96c679", "masks": "assets/minibag.masks.png?v=abedf2ebc7", "chain": "assets/minibag.chain.png?v=8b6c6e8792", "metalImages": {"silver": "assets/minibag.metal-silver.png?v=1cc690fa86", "gold": "assets/minibag.metal-gold.png?v=4f78fbd676"}, "chainImages": {"silver": "assets/minibag.chain-silver.png?v=ac87e82188", "gold": "assets/minibag.chain-gold.png?v=ea0e571567"}, "stitchPath": {"pts": [[251.2, 1084.8], [250.9, 1087.9], [250.7, 1091.0], [250.5, 1094.2], [250.3, 1097.3], [250.2, 1100.4], [250.2, 1103.5], [250.1, 1106.6], [250.1, 1109.7], [250.1, 1112.8], [250.1, 1115.9], [250.0, 1119.0], [249.9, 1122.1], [249.8, 1125.2], [249.6, 1128.3], [249.5, 1131.4], [249.3, 1134.5], [249.3, 1137.6], [249.2, 1140.7], [249.2, 1143.8], [249.3, 1147.0], [249.3, 1150.1], [249.4, 1153.2], [249.5, 1156.4], [249.6, 1159.5], [249.7, 1162.7], [249.8, 1165.8], [249.9, 1168.9], [250.0, 1172.1], [250.0, 1175.2], [250.0, 1178.3], [250.0, 1181.4], [249.9, 1184.6], [249.8, 1187.7], [249.7, 1190.7], [249.5, 1193.8], [249.4, 1196.9], [249.2, 1200.0], [249.1, 1203.0], [249.1, 1206.1], [249.1, 1209.2], [249.1, 1212.3], [249.2, 1215.4], [249.3, 1218.5], [249.4, 1221.6], [249.5, 1224.7], [249.7, 1227.8], [250.0, 1230.9], [250.3, 1234.0], [250.7, 1237.1], [251.2, 1240.2], [251.8, 1243.2], [252.5, 1246.3], [253.3, 1249.3], [254.2, 1252.2], [255.2, 1255.2], [256.3, 1258.1], [257.5, 1260.9], [258.8, 1263.8], [260.2, 1266.5], [261.7, 1269.2], [263.4, 1271.8], [265.2, 1274.3], [267.0, 1276.8], [269.0, 1279.2], [271.1, 1281.5], [273.2, 1283.8], [275.4, 1286.0], [277.6, 1288.1], [280.0, 1290.2], [282.3, 1292.3], [284.7, 1294.3], [287.2, 1296.3], [289.6, 1298.2], [292.2, 1300.0], [294.7, 1301.8], [297.4, 1303.5], [300.0, 1305.1], [302.7, 1306.6], [305.5, 1308.1], [308.3, 1309.4], [311.1, 1310.7], [314.0, 1311.9], [316.9, 1312.9], [319.9, 1313.9], [322.9, 1314.8], [325.9, 1315.6], [328.9, 1316.3], [332.0, 1316.9], [335.1, 1317.4], [338.2, 1317.8], [341.3, 1318.2], [344.4, 1318.5], [347.5, 1318.8], [350.7, 1319.0], [353.8, 1319.2], [356.9, 1319.3], [360.1, 1319.5], [363.2, 1319.6], [366.3, 1319.7], [369.5, 1319.9], [372.6, 1320.0], [375.8, 1320.2], [378.9, 1320.4], [382.0, 1320.6], [385.1, 1320.8], [388.3, 1320.9], [391.4, 1321.0], [394.5, 1321.1], [397.7, 1321.1], [400.8, 1321.1], [403.9, 1321.0], [407.0, 1320.9], [410.2, 1320.8], [413.3, 1320.6], [416.4, 1320.5], [419.6, 1320.4], [422.7, 1320.3], [425.8, 1320.2], [429.0, 1320.2], [432.1, 1320.1], [435.3, 1320.1], [438.4, 1320.0], [441.6, 1320.0], [444.7, 1319.9], [447.8, 1319.8], [451.0, 1319.8], [454.1, 1319.7], [457.3, 1319.6], [460.4, 1319.5], [463.6, 1319.4], [466.7, 1319.4], [469.9, 1319.3], [473.0, 1319.2], [476.1, 1319.1], [479.3, 1319.0], [482.4, 1318.9], [485.6, 1318.8], [488.7, 1318.7], [491.9, 1318.7], [495.0, 1318.6], [498.1, 1318.6], [501.3, 1318.7], [504.4, 1318.7], [507.6, 1318.8], [510.7, 1319.0], [513.8, 1319.1], [517.0, 1319.3], [520.1, 1319.5], [523.2, 1319.7], [526.4, 1319.8], [529.5, 1320.0], [532.6, 1320.0], [535.8, 1320.1], [538.9, 1320.0], [542.0, 1320.0], [545.1, 1319.9], [548.3, 1319.7], [551.4, 1319.6], [554.5, 1319.4], [557.7, 1319.3], [560.8, 1319.1], [563.9, 1319.1], [567.1, 1319.0], [570.2, 1319.0], [573.3, 1319.1], [576.5, 1319.1], [579.6, 1319.2], [582.8, 1319.3], [585.9, 1319.3], [589.0, 1319.3], [592.2, 1319.3], [595.3, 1319.3], [598.4, 1319.2], [601.6, 1319.0], [604.7, 1318.8], [607.8, 1318.5], [610.9, 1318.1], [614.0, 1317.6], [617.1, 1317.1], [620.1, 1316.5], [623.2, 1315.8], [626.2, 1315.0], [629.1, 1314.0], [632.1, 1313.0], [635.0, 1311.9], [637.8, 1310.7], [640.6, 1309.3], [643.3, 1307.8], [646.0, 1306.3], [648.7, 1304.6], [651.3, 1302.9], [653.8, 1301.1], [656.3, 1299.2], [658.8, 1297.3], [661.2, 1295.3], [663.6, 1293.3], [665.9, 1291.2], [668.1, 1289.1], [670.3, 1286.8], [672.4, 1284.6], [674.4, 1282.2], [676.2, 1279.8], [678.0, 1277.3], [679.5, 1274.7], [681.0, 1272.0], [682.3, 1269.2], [683.4, 1266.4], [684.4, 1263.5], [685.3, 1260.5], [686.1, 1257.5], [686.9, 1254.5], [687.5, 1251.4], [688.1, 1248.4], [688.6, 1245.3], [689.1, 1242.2], [689.5, 1239.1], [689.9, 1235.9], [690.2, 1232.8], [690.4, 1229.7], [690.6, 1226.6], [690.8, 1223.4], [690.9, 1220.3], [691.0, 1217.2], [691.1, 1214.0], [691.2, 1210.9], [691.3, 1207.7], [691.3, 1204.6], [691.3, 1201.4], [691.3, 1198.3], [691.4, 1195.1], [691.4, 1192.0], [691.3, 1188.8], [691.3, 1185.7], [691.3, 1182.6], [691.2, 1179.4], [691.2, 1176.3], [691.1, 1173.1], [691.0, 1170.0], [690.9, 1166.8], [690.7, 1163.7], [690.5, 1160.6], [690.3, 1157.4], [690.1, 1154.3], [689.9, 1151.2], [689.6, 1148.0], [689.4, 1144.9], [689.1, 1141.8], [688.8, 1138.6], [688.6, 1135.5], [688.3, 1132.4], [688.1, 1129.2], [687.8, 1126.1], [687.6, 1123.0], [687.3, 1119.8], [687.1, 1116.7], [686.8, 1113.5], [686.5, 1110.4], [686.2, 1107.3], [685.8, 1104.2], [685.4, 1101.1], [685.0, 1098.0], [684.5, 1094.8], [684.0, 1091.8], [683.4, 1088.7], [682.8, 1085.6], [682.1, 1082.5], [681.3, 1079.5], [680.6, 1076.4], [679.8, 1073.4], [679.0, 1070.4], [678.2, 1067.3], [677.3, 1064.3]], "pitch": 19.92, "dash": 12.35, "width": 4.5, "pitchMm": 3.32}, "regions": "assets/minibag.regions.png?v=7a4ac0bba9", "dRings": [{"cx": 228.4, "cy": 1086.0, "w": 36, "h": 48}, {"cx": 701.4, "cy": 1079.0, "w": 36, "h": 48}], "w": 946, "h": 1559, "pxPerMm": 6, "sizeMm": {"w": 157.7, "h": 259.8}, "bag": {"cx": 472.7, "bottom": 1522.8, "widthMm": 115}, "ring": {"cx": 783.4, "cy": 1043.0, "d": 252}, "crop": {"bare": {"x": 0, "y": 881, "w": 946, "h": 678}, "chain": {"x": 0, "y": 0, "w": 946, "h": 1559}}, "parts": {"leather": {"baseLum": 0.780201, "pixels": 250148, "baseL": 82.82, "kd": 77.78, "ku": 68.39}, "metal": {"baseLum": 0.424925, "pixels": 23564}}}, "coincase": {"base": "assets/coincase.base.png?v=31faa92773", "masks": "assets/coincase.masks.png?v=4a23683b6c", "chain": "assets/coincase.chain.png?v=de34890ba1", "metalImages": {"silver": "assets/coincase.metal-silver.png?v=39fd45b233", "gold": "assets/coincase.metal-gold.png?v=4f933fde96"}, "chainImages": {"silver": "assets/coincase.chain-silver.png?v=93b0752866", "gold": "assets/coincase.chain-gold.png?v=11447afbfe"}, "chainHookImages": {"silver": "assets/coincase.chainhook-silver.png?v=430c9aa149", "gold": "assets/coincase.chainhook-gold.png?v=fa38ff3cec"}, "dRings": [], "w": 1014, "h": 1600, "pxPerMm": 6, "sizeMm": {"w": 169.0, "h": 266.7}, "bag": {"cx": 506.8, "bottom": 1574.6, "widthMm": 88}, "ring": {"cx": 811.5, "cy": 1048.0, "d": 252}, "crop": {"bare": {"x": 0, "y": 885, "w": 1014, "h": 715}, "chain": {"x": 0, "y": 0, "w": 1014, "h": 1600}}, "parts": {"leather": {"baseLum": 0.718056, "pixels": 209848, "baseL": 74.822, "kd": 69.43, "ku": 65.53}, "metal": {"baseLum": 0.41568, "pixels": 22848}, "leatherChevre": {"baseLum": 0.702073, "pixels": 209848, "baseL": 72.954, "kd": 71.24, "ku": 64.69}}, "chevre": "assets/coincase.chevre.png?v=cc3efc2316"}, "coincase-large": {"base": "assets/coincase-large.base.png?v=3fb1d4b9e1", "masks": "assets/coincase-large.masks.png?v=dafd50a925", "chain": "assets/coincase-large.chain.png?v=5ffaa88dd6", "metalImages": {"silver": "assets/coincase-large.metal-silver.png?v=dee6bbe1a3", "gold": "assets/coincase-large.metal-gold.png?v=210ef350c8"}, "chainImages": {"silver": "assets/coincase-large.chain-silver.png?v=f21df9c6ff", "gold": "assets/coincase-large.chain-gold.png?v=a922c3ee13"}, "chainHookImages": {"silver": "assets/coincase-large.chainhook-silver.png?v=010c42212c", "gold": "assets/coincase-large.chainhook-gold.png?v=639e3518b3"}, "dRings": [], "w": 1014, "h": 1600, "pxPerMm": 6, "sizeMm": {"w": 169.0, "h": 266.7}, "bag": {"cx": 506.8, "bottom": 1561.3, "widthMm": 100}, "ring": {"cx": 851.7, "cy": 1052.0, "d": 252}, "crop": {"bare": {"x": 0, "y": 885, "w": 1014, "h": 715}, "chain": {"x": 0, "y": 0, "w": 1014, "h": 1600}}, "parts": {"leather": {"baseLum": 0.693307, "pixels": 247896, "baseL": 72.575, "kd": 62.5, "ku": 63.69}, "metal": {"baseLum": 0.379783, "pixels": 21732}, "leatherChevre": {"baseLum": 0.685853, "pixels": 247896, "baseL": 71.426, "kd": 66.88, "ku": 63.88}}, "chevre": "assets/coincase-large.chevre.png?v=7237ce9eda"}};
+const PRODUCTS=[
+ {key:"minibag",label:"ツイストミニバッグ",lines:["ツイスト","ミニバッグ"],short:"ミニバッグ",sizeMm:"115 × 90 mm",materials:["calf"],defaultColor:"ivory",stitch:true,ring:"standard",split:true,url:"https://canvasart-k.stores.jp/items/67ffcffe65f665599be5a6c1"},
+ {key:"coincase",label:"ツイストコインケース",lines:["ツイスト","コインケース"],short:"コインケース",sizeMm:"88 × 88 mm",materials:["calf","chevre"],defaultColor:"purple",defaultMetal:"gold",stitch:false,ring:"hook",grainKeep:{kd:.6,ku:1.3},shadowDepth:.7,url:"https://canvasart-k.stores.jp/items/64f2a2a4e7d72200295f775f"},
+ {key:"coincase-large",label:"ツイストコインケース｟large｠",lines:["ツイスト","コインケース","｟large｠"],small:true,short:"コインケース｟large｠",sizeMm:"100 × 88 mm",materials:["calf","chevre"],defaultColor:"black",stitch:false,ring:"hook",grainKeep:{kd:.6,ku:1.3},url:"https://canvasart-k.stores.jp/items/669bb93c2753831e7d0189e7"}
+];
+const METALS=[{value:"silver",label:"シルバー"},{value:"gold",label:"ゴールド"}];
+const CROC={"black": {"label": "型押しクロコハンドル ブラック", "hex": "#2f3534", "texture": "assets/croc-black.jpg?v=a9f41db6bc", "w": 347, "h": 440, "scale": 0.55}, "ivory": {"label": "型押しクロコハンドル アイボリー", "hex": "#cfc194", "texture": "assets/croc-ivory.jpg?v=860cb04d3b", "w": 346, "h": 440, "scale": 0.55}};
+const crocParts=l=>{const m=l.match(/^(型押しクロコ)(ハンドル)\s*(.+)$/);return m?[m[1],m[2],m[3]]:[l];};
+const HANDLE_OPTIONS=[{value:"calf",label:"フタと同色"},{value:"croc-ivory",label:"型押しクロコ アイボリー",parts:["型押しクロコ","アイボリー"]},{value:"croc-black",label:"型押しクロコ ブラック",parts:["型押しクロコ","ブラック"]}];
+const crocOf=h=>h&&h.startsWith("croc-")?CROC[h.slice(5)]:null;
+const HOOK_OPTIONS=[{value:"none",label:"なし"},{value:"on",label:"あり"}];
+const CHAIN_OPTIONS=[{value:"none",label:"なし"},{value:"on",label:"あり"}];
+const BLACK_THREAD=[40,38,36],STITCH_COVER_GAIN=1.25;
+const STITCHES=[{value:"white",label:"白"},{value:"black",label:"黒"}];
+const GRAIN_SCALE_MIN=.4;
+const QUERY=new URLSearchParams(location.search);
+const productByKey=Object.fromEntries(PRODUCTS.map(p=>[p.key,p]));
+const colorByKey=Object.fromEntries(COLORS.map(c=>[c.key,c]));
+const state={product:Object.hasOwn(productByKey,QUERY.get("product"))?QUERY.get("product"):"minibag",per:{}};
+const defaultsOf=p=>({color:p.defaultColor,body:p.defaultColor,handle:"calf",metal:p.defaultMetal||"silver",stitch:"white",hook:"none",chain:"none"});
+for(const p of PRODUCTS)state.per[p.key]=defaultsOf(p);
+const cur=()=>state.per[state.product];
+const MAISON_CORE_VERSION="2026-10-17.3";
+function clamp(v){return Math.max(0,Math.min(255,v));}
+function hexToRgb(h){const n=parseInt(h.slice(1),16);return {r:n>>16&255,g:n>>8&255,b:n&255};}
+function srgbToLinear(v){v/=255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);}
+function linearToSrgb(v){return v<=.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-.055;}
+function rgbToLab(rgb){const r=srgbToLinear(rgb.r),g=srgbToLinear(rgb.g),b=srgbToLinear(rgb.b);const x=(r*.4124564+g*.3575761+b*.1804375)/.95047,y=(r*.2126729+g*.7151522+b*.072175)/1,z=(r*.0193339+g*.119192+b*.9503041)/1.08883;const f=v=>v>.008856?Math.cbrt(v):7.787*v+16/116;const fx=f(x),fy=f(y),fz=f(z);return {L:116*fy-16,a:500*(fx-fy),b:200*(fy-fz)};}
+function labToRgbRaw(L,a,b){const fy=(L+16)/116,fx=fy+a/500,fz=fy-b/200;const finv=t=>{const t3=t*t*t;return t3>.008856?t3:(t-16/116)/7.787;};const x=finv(fx)*.95047,y=finv(fy),z=finv(fz)*1.08883;return {r:linearToSrgb(x*3.2404542+y*-1.5371385+z*-0.4985314)*255,g:linearToSrgb(x*-.969266+y*1.8760108+z*.041556)*255,b:linearToSrgb(x*.0556434+y*-.2040259+z*1.0572252)*255};}
+const HIGHLIGHT_HEADROOM=.5;
+function flatLeatherTone(lum,lab,baseLum,kd,ku){
+ const ratio=Math.max(.35,Math.min(1.60,lum/Math.max(baseLum,.001)));
+ let L;if(ratio<1)L=lab.L+(ratio-1)*kd;else{const d=(ratio-1)*ku,head=Math.max(.001,(100-lab.L)*HIGHLIGHT_HEADROOM);L=lab.L+head*(1-Math.exp(-d/head));}
+ L=Math.max(0,Math.min(100,L));
+ let rgb=labToRgbRaw(L,lab.a,lab.b);
+ if([rgb.r,rgb.g,rgb.b].some(v=>v<0||v>255)){const C=Math.hypot(lab.a,lab.b),h=Math.atan2(lab.b,lab.a);let lo=0,hi=C;for(let i=0;i<20;i++){const mid=(lo+hi)/2,t=labToRgbRaw(L,Math.cos(h)*mid,Math.sin(h)*mid);if([t.r,t.g,t.b].every(v=>v>=0&&v<=255))lo=mid;else hi=mid;}rgb=labToRgbRaw(L,Math.cos(h)*lo,Math.sin(h)*lo);}
+ return {r:Math.round(clamp(rgb.r)),g:Math.round(clamp(rgb.g)),b:Math.round(clamp(rgb.b))};
+}
+const METAL_GLOSS={k:2.1,pivot:.42,shade:.5,specFrom:.68,specSpan:.3,spec:.75};
+const METAL_COLORS={silver:{hi:{r:243,g:246,b:252},sh:{r:109,g:118,b:130}},gold:{hi:{r:248,g:224,b:140},sh:{r:132,g:104,b:50}}};
+function metalTone(lum,mode){const G=METAL_GLOSS,hi=METAL_COLORS[mode].hi,sh0=METAL_COLORS[mode].sh;
+ let t=Math.max(0,Math.min(1,.5+(lum-G.pivot)*G.k));t=t*t*(3-2*t);
+ let r=sh0.r*G.shade*(1-t)+hi.r*t,g=sh0.g*G.shade*(1-t)+hi.g*t,b=sh0.b*G.shade*(1-t)+hi.b*t;
+ const sp=Math.pow(Math.max(0,Math.min(1,(lum-G.specFrom)/G.specSpan)),1.5)*G.spec;r=r*(1-sp)+255*sp;g=g*(1-sp)+255*sp;b=b*(1-sp)+255*sp;
+ if(mode==="gold"){const gray=(r+g+b)/3,mute=.04;r=r*(1-mute)+gray*mute;g=g*(1-mute)+gray*mute;b=b*(1-mute)+gray*mute;}
+ return {r:clamp(r),g:clamp(g),b:clamp(b)};}
+function stitchTone(lum,mode,baseLum){const k=Math.max(.55,Math.min(1.08,lum/Math.max(baseLum,.001)));const c=mode==="black"?{r:44,g:42,b:40}:{r:246,g:243,b:236};const add=mode==="black"?(k-1)*60:0;return {r:clamp(c.r*(mode==="black"?1:k)+add),g:clamp(c.g*(mode==="black"?1:k)+add),b:clamp(c.b*(mode==="black"?1:k)+add)};}
+const LUT_STEPS=1021,lutCache=new Map();
+function makeLut(key,fn){if(lutCache.has(key))return lutCache.get(key);const t=new Uint8ClampedArray(LUT_STEPS*3);for(let i=0;i<LUT_STEPS;i++){const c=fn(i/1020);t[i*3]=c.r;t[i*3+1]=c.g;t[i*3+2]=c.b;}lutCache.set(key,t);return t;}
+function leatherLut(hex,part,keep){const lab=rgbToLab(hexToRgb(hex)),s=Math.max(GRAIN_SCALE_MIN,Math.min(1,lab.L/part.baseL)),sd=keep?Math.max(s,keep.kd):s,dk=(1-s)/(1-GRAIN_SCALE_MIN),su=keep?(1-dk)*1+dk*keep.ku:s;return makeLut(hex+"|"+part.baseLum+"|"+part.kd+"|"+part.ku+"|"+sd+"|"+su,l=>flatLeatherTone(l,lab,part.baseLum,part.kd*sd,part.ku*su));}
+const METAL_CONTRAST=1.35,METAL_MID=.4;
+function metalLut(mode,baseLum){return makeLut("metal|"+mode+"|"+(baseLum||""),l=>metalTone(baseLum?Math.max(0,Math.min(1,METAL_MID+(l-baseLum)*METAL_CONTRAST)):l,mode));}
+function stitchLut(mode,baseLum){return makeLut("stitch|"+mode+"|"+baseLum,l=>stitchTone(l,mode,baseLum));}
+function loadImage(src){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(new Error("load failed: "+src));im.src=src;});}
+function pixels(im){const c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext("2d",{willReadFrequently:true});x.drawImage(im,0,0);return x.getImageData(0,0,c.width,c.height);}
+function lumIndex(img){const d=img.data,n=d.length/4,out=new Uint16Array(n);for(let p=0,i=0;p<n;p++,i+=4)out[p]=Math.round((.2126*d[i]+.7152*d[i+1]+.0722*d[i+2])*4);return out;}
+const SHADOW_RADIUS_MM=4,SHADOW_SELF_MM=.8;
+const SHADOW_DEPTH=.4;
+function boxBlur(a,w,h,r){const t=new Float64Array(Math.max(w,h)+1);
+ for(let y=0;y<h;y++){const o=y*w;for(let x=0;x<w;x++)t[x+1]=t[x]+a[o+x];for(let x=0;x<w;x++){const l=Math.max(0,x-r),u=Math.min(w,x+r+1);a[o+x]=(t[u]-t[l])/(u-l);}}
+ for(let x=0;x<w;x++){for(let y=0;y<h;y++)t[y+1]=t[y]+a[y*w+x];for(let y=0;y<h;y++){const l=Math.max(0,y-r),u=Math.min(h,y+r+1);a[y*w+x]=(t[u]-t[l])/(u-l);}}}
+function shadowField(lum,md,w,h,r){const n=w*h,num=new Float32Array(n),den=new Float32Array(n);
+ for(let p=0;p<n;p++){const wt=md[p*4]/255;num[p]=lum[p]*wt;den[p]=wt;}
+ for(let k=0;k<3;k++){boxBlur(num,w,h,r);boxBlur(den,w,h,r);}
+ for(let p=0;p<n;p++)num[p]=den[p]>1e-3?num[p]/den[p]:lum[p];return num;}
+function depthOf(P){const p=productByKey[P.name];return p&&p.shadowDepth!==undefined?p.shadowDepth:SHADOW_DEPTH;}
+function softLum(P,mat){const D=depthOf(P),key=mat+"|"+D;if(P.soft[key])return P.soft[key];const src=P.lum[mat];if(D>=1)return P.soft[key]=src;
+ const v=P.v,field=P.field[mat]||(P.field[mat]=shadowField(src,P.masks.data,v.w,v.h,Math.round(SHADOW_RADIUS_MM*v.pxPerMm)));
+ const base=v.parts[mat==="chevre"?"leatherChevre":"leather"].baseLum*1020,k=1-D,out=new Uint16Array(src.length);
+ const self=P.selfField[mat]||(P.selfField[mat]=shadowField(src,P.masks.data,v.w,v.h,Math.max(1,Math.round(SHADOW_SELF_MM*v.pxPerMm))));
+ for(let p=0;p<src.length;p++){const d=base-field[p];if(d<=0){out[p]=src[p];continue;}const own=Math.max(0,Math.min(1,(base-self[p])/d));out[p]=Math.min(1020,Math.round(src[p]+d*k*own));}return P.soft[key]=out;}
+const prepared={},rings={};
+async function prepare(name){
+ const v=VIEWS[name],srcs=[v.base,v.masks,v.chain].concat(v.chevre?[v.chevre]:[]);
+ const ims=await Promise.all(srcs.map(loadImage));
+ const [base,masks,chain]=ims.slice(0,3).map(pixels),chev=v.chevre?pixels(ims[3]):null;
+ const metalImgs={};for(const [m,src] of Object.entries(v.metalImages||{}))metalImgs[m]=pixels(await loadImage(src));
+ const chainImgs={};for(const [m,src] of Object.entries(v.chainImages||{}))chainImgs[m]=await loadImage(src);
+ const chainHookImgs={};for(const [m,src] of Object.entries(v.chainHookImages||{}))chainHookImgs[m]=await loadImage(src);
+ const stitchCover=v.stitchCover?pixels(await loadImage(v.stitchCover)):null;
+ const regions=v.regions?pixels(await loadImage(v.regions)):null;
+ const offscreen=document.createElement("canvas");offscreen.width=v.w;offscreen.height=v.h;
+ const chainCanvas=document.createElement("canvas");chainCanvas.width=v.w;chainCanvas.height=v.h;
+ prepared[name]={v,base,masks,chain,metalImgs,chainImgs,chainHookImgs,stitchCover,regions,lum:{calf:lumIndex(base),chevre:chev?lumIndex(chev):null},chainLum:lumIndex(chain),offscreen,chainCanvas,chainKey:null,soft:{},field:{},selfField:{},name};
+}
+const RING_VERSION={"silver": "681f7c2198", "gold": "f9d3b97b7c"};
+const crocImgs={};
+async function loadCroc(){for(const [k,c] of Object.entries(CROC))crocImgs[k]=await loadImage(c.texture);}
+async function loadRings(){for(const m of METALS)rings[m.value]=await loadImage("assets/rings/ring-"+m.value+".png?v="+RING_VERSION[m.value]);}
+const CHEVRE_GLOSS=0;
+const CHEVRE_GLOSS_LUM=900;
+function chevreGloss(P){if(P.cgloss)return P.cgloss;const v=P.v,src=P.lum.chevre,n=src.length,md=P.masks.data,mm=v.pxPerMm;
+ const fine=new Float32Array(n),wide=new Float32Array(n),w=new Float32Array(n),w2=new Float32Array(n);
+ for(let p=0;p<n;p++){const a=md[p*4]/255;fine[p]=src[p]*a;wide[p]=src[p]*a;w[p]=a;w2[p]=a;}
+ for(let k=0;k<3;k++){boxBlur(fine,v.w,v.h,Math.max(1,Math.round(.5*mm)));boxBlur(w,v.w,v.h,Math.max(1,Math.round(.5*mm)));boxBlur(wide,v.w,v.h,Math.round(5*mm));boxBlur(w2,v.w,v.h,Math.round(5*mm));}
+ const base=v.parts.leatherChevre.baseLum*1020,g=new Float32Array(n);let sd=0,cnt=0;
+ for(let p=0;p<n;p++){if(md[p*4]<250)continue;const d=src[p]-fine[p]/Math.max(w[p],1e-3);sd+=d*d;cnt++;}sd=Math.sqrt(sd/Math.max(cnt,1));
+ for(let p=0;p<n;p++){const a=md[p*4]/255;if(!a)continue;const d=src[p]-fine[p]/Math.max(w[p],1e-3),f=Math.max(0,Math.min(1,(d/sd-.6)/1.8)),
+  b=wide[p]/Math.max(w2[p],1e-3),s=Math.max(0,Math.min(1,(b/base-.94)/.16));g[p]=(.07*f*f*(.4+.6*s)+.16*s*s*(3-2*s))*a;}
+ let sum=0,wsum=0;for(let p=0;p<n;p++){const a=md[p*4]/255;sum+=g[p]*a;wsum+=a;}const mean=sum/Math.max(wsum,1);for(let p=0;p<n;p++)if(md[p*4])g[p]-=mean*md[p*4]/255;
+ return P.cgloss=g;}
+function renderBag(P,sel){
+ const {v,base,masks,offscreen}=P,color=colorByKey[sel.color],mat=matOf(color);
+ const part=mat==="chevre"?v.parts.leatherChevre:v.parts.leather,lumIdx=softLum(P,P.lum[mat]?mat:"calf");
+ const keep=productByKey[state.product].grainKeep,leather=leatherLut(color.hex,part,keep),metal=metalLut(sel.metal,v.parts.metal.baseLum),lumCalf=P.lum.calf;
+ const split=productByKey[state.product].split&&P.regions,rd=split?P.regions.data:null,croc=crocOf(sel.handle);
+ const bodyL=split?leatherLut(colorByKey[sel.body].hex,part,keep):leather,handleL=split&&croc?leatherLut(croc.hex,part,keep):leather;
+ const stitch=v.parts.stitch?stitchLut(sel.stitch,v.parts.stitch.baseLum):null;
+ const out=new ImageData(v.w,v.h),od=out.data,bd=base.data,md=masks.data,mi=P.metalImgs[sel.metal]?P.metalImgs[sel.metal].data:null;
+ const black=stitch&&sel.stitch==="black"&&P.stitchCover,cov=black?P.stitchCover.data:null;
+ const gl=mat==="chevre"&&CHEVRE_GLOSS>0?chevreGloss(P):null,GK=CHEVRE_GLOSS;
+ for(let p=0,i=0;p<lumIdx.length;p++,i+=4){const a=bd[i+3];if(a===0)continue;
+  const lL=(gl?Math.max(0,Math.min(1020,Math.round(lumIdx[p]+gl[p]*GK*CHEVRE_GLOSS_LUM))):lumIdx[p])*3,lM=lumCalf[p]*3;let wl=md[i]/255,wm=md[i+1]/255,ws=stitch?md[i+2]/255:0;
+  if(black){wl+=ws;ws=0;}
+  const sr=ws?stitch[lM]:0,sg=ws?stitch[lM+1]:0,sb=ws?stitch[lM+2]:0;
+  const mr=mi?mi[i]:metal[lM],mg=mi?mi[i+1]:metal[lM+1],mb=mi?mi[i+2]:metal[lM+2];
+  let lr=leather[lL],lg=leather[lL+1],lb=leather[lL+2];
+  if(split){const f=rd[i]/255,h=rd[i+1]/255,b=Math.max(0,1-f-h);lr=lr*f+handleL[lL]*h+bodyL[lL]*b;lg=lg*f+handleL[lL+1]*h+bodyL[lL+1]*b;lb=lb*f+handleL[lL+2]*h+bodyL[lL+2]*b;}
+  od[i]=lr*wl+mr*wm+sr*ws;od[i+1]=lg*wl+mg*wm+sg*ws;od[i+2]=lb*wl+mb*wm+sb*ws;od[i+3]=a;
+  if(black){const c=Math.min(1,cov[i]/255*STITCH_COVER_GAIN)*(1-wm);if(c>0){const k=Math.max(.8,Math.min(1.15,lumCalf[p]/1020/v.parts.stitch.baseLum));const t=[BLACK_THREAD[0]*k,BLACK_THREAD[1]*k,BLACK_THREAD[2]*k];od[i]=od[i]*(1-c)+t[0]*c;od[i+1]=od[i+1]*(1-c)+t[1]*c;od[i+2]=od[i+2]*(1-c)+t[2]*c;}}}
+ offscreen.getContext("2d").putImageData(out,0,0);
+}
+function renderChain(P,mode){
+ if(P.chainKey===mode)return;const {v,chain,chainLum,chainCanvas}=P,lut=metalLut(mode);
+ const out=new ImageData(v.w,v.h),od=out.data,cd=chain.data;
+ for(let p=0,i=0;p<chainLum.length;p++,i+=4){const a=cd[i+3];if(a===0)continue;const l=chainLum[p]*3;od[i]=lut[l];od[i+1]=lut[l+1];od[i+2]=lut[l+2];od[i+3]=a;}
+ chainCanvas.getContext("2d").putImageData(out,0,0);P.chainKey=mode;
+}
+const STITCH_COLORS={white:"#f5f2ea",black:"#2a2826"};
+function drawStitch(ctx,sp,mode){
+ const path=new Path2D();sp.pts.forEach(([x,y],i)=>i?path.lineTo(x,y):path.moveTo(x,y));
+ const w=sp.width,dash=[Math.max(.1,sp.dash-w),sp.pitch-sp.dash+w];
+ ctx.save();ctx.lineCap="round";ctx.lineJoin="round";ctx.setLineDash(dash);
+ ctx.translate(.6,.9);ctx.strokeStyle="rgba(0,0,0,.22)";ctx.lineWidth=w+1;ctx.stroke(path);ctx.translate(-.6,-.9);
+ ctx.strokeStyle=STITCH_COLORS[mode];ctx.lineWidth=w;ctx.stroke(path);ctx.restore();
+}
+function drawHandleInset(croc,metal){
+ const cv=document.getElementById("handleCanvas"),g=cv.getContext("2d"),W=cv.width,H=cv.height;g.clearRect(0,0,W,H);
+ const x0=20,x1=W-20,h=78,y0=(H-h)/2,r=h*.2,strip=new Path2D();strip.roundRect(x0,y0,x1-x0,h,r);
+ g.save();g.shadowColor="rgba(0,0,0,.12)";g.shadowBlur=6;g.shadowOffsetY=2;g.fillStyle=croc.hex;g.fill(strip);g.restore();
+ g.save();g.clip(strip);const pat=g.createPattern(crocImgs[croc===CROC.black?"black":"ivory"],"repeat");const sc=croc.scale||.55;pat.setTransform(new DOMMatrix().translate(x0,y0).scale(sc*h/78));g.fillStyle=pat;g.fillRect(x0,y0,x1-x0,h);
+ g.restore();
+ g.lineWidth=1;g.strokeStyle="rgba(0,0,0,.12)";g.stroke(strip);
+ const hi=METAL_COLORS[metal].hi,s0=METAL_COLORS[metal].sh,css=c=>"rgb("+c.r+","+c.g+","+c.b+")";
+ const ramp=hardwareRamp(metal),rr=19.8;
+ for(const cx of [x0+h*.5,x1-h*.5]){const cy=H/2;
+  g.save();g.shadowColor="rgba(0,0,0,.5)";g.shadowBlur=5;g.shadowOffsetX=1.5;g.shadowOffsetY=2.5;g.beginPath();g.arc(cx,cy,rr-.5,0,Math.PI*2);g.fillStyle="rgb("+ramp[40*3]+","+ramp[40*3+1]+","+ramp[40*3+2]+")";g.fill();g.restore();
+  const bx=Math.floor(cx-rr-1),by=Math.floor(cy-rr-1),bw=Math.ceil(rr*2+3),img=g.getImageData(bx,by,bw,bw),d=img.data;
+  const L=[-.42,-.55,.72],ln=Math.hypot(...L),Lx=L[0]/ln,Ly=L[1]/ln,Lz=L[2]/ln,Hx=Lx,Hy=Ly,Hz=Lz+1,hn=Math.hypot(Hx,Hy,Hz);
+  for(let yy=0;yy<bw;yy++)for(let xx=0;xx<bw;xx++){const dx=(bx+xx+.5-cx)/rr,dy=(by+yy+.5-cy)/rr,q=dx*dx+dy*dy,dist=Math.sqrt(q)*rr,a=Math.max(0,Math.min(1,rr-dist+.5));if(a<=0)continue;
+   const nz=Math.sqrt(Math.max(0,1-Math.min(1,q))),diff=Math.max(0,dx*Lx+dy*Ly+nz*Lz),spec=Math.pow(Math.max(0,(dx*Hx+dy*Hy+nz*Hz)/hn),40);
+   const floor=Math.pow(Math.max(0,dy),3)*.35*(1-Math.abs(dx));
+   const ry=2*nz*dy,sm=(e0,e1,x)=>{const u=Math.max(0,Math.min(1,(x-e0)/(e1-e0)));return u*u*(3-2*u);};
+   let env=.92-.8*sm(-.55,-.1,ry)+.45*sm(.15,.55,ry);env+=.12*(dx<0?-dx:0)*(1-sm(-.1,.3,ry));
+   let t=env*.82+.18*diff+.7*spec+floor*.5;if(q>.8)t*=1-(q-.8)*2.5;t=Math.max(0,Math.min(1,t));const k=Math.round(t*255)*3,o=(yy*bw+xx)*4;
+   d[o]=d[o]*(1-a)+ramp[k]*a;d[o+1]=d[o+1]*(1-a)+ramp[k+1]*a;d[o+2]=d[o+2]*(1-a)+ramp[k+2]*a;d[o+3]=Math.max(d[o+3],a*255);}
+  g.putImageData(img,bx,by);}
+}
+const rampCache={};
+function hardwareRamp(metal){if(rampCache[metal])return rampCache[metal];const P=prepared.minibag,mi=P.metalImgs[metal].data,md=P.masks.data,px=[];
+ for(let i=0;i<md.length;i+=4)if(md[i+1]>250)px.push([mi[i],mi[i+1],mi[i+2],mi[i]*.2126+mi[i+1]*.7152+mi[i+2]*.0722]);
+ px.sort((a,b)=>a[3]-b[3]);const r=new Uint8ClampedArray(256*3);
+ for(let k=0;k<256;k++){const lo=Math.floor(k/256*px.length),hi=Math.max(lo+1,Math.floor((k+1)/256*px.length));let s0=0,s1=0,s2=0;for(let i=lo;i<hi;i++){s0+=px[i][0];s1+=px[i][1];s2+=px[i][2];}const n=hi-lo;r[k*3]=s0/n;r[k*3+1]=s1/n;r[k*3+2]=s2/n;}
+ return rampCache[metal]=r;}
+let bagAlpha=null;
+function fitInset(){const inset=document.getElementById("handleInset");if(inset.hidden)return;const P=prepared.minibag,v=P.v,c=v.crop.bare;
+ if(!bagAlpha){const d=P.base.data;bagAlpha=new Uint8Array(v.w*v.h);for(let p=0;p<bagAlpha.length;p++)bagAlpha[p]=d[p*4+3]>16?1:0;}
+ const view=document.getElementById("view");let probe=null,cr;
+ if(view.width!==c.w||view.height!==c.h){probe=document.createElement("canvas");probe.width=c.w;probe.height=c.h;view.style.display="none";view.parentNode.insertBefore(probe,view);cr=probe.getBoundingClientRect();}
+ else cr=view.getBoundingClientRect();
+ const sc=cr.width/c.w,M=6;
+ const hits=(w)=>{const cv=document.getElementById("handleCanvas");cv.width=Math.round(480*INSET_LEN);inset.style.width=Math.round(w*INSET_LEN)+"px";const r=inset.getBoundingClientRect();const X0=Math.max(0,Math.floor((r.left-cr.left)/sc)),Y0=Math.max(0,Math.floor((r.top-cr.top)/sc)),X1=Math.min(c.w,Math.ceil((r.right+M-cr.left)/sc)),Y1=Math.min(c.h,Math.ceil((r.bottom+M-cr.top)/sc));
+  for(let y=Y0;y<Y1;y++)for(let x=X0;x<X1;x++)if(bagAlpha[(y+c.y)*v.w+x+c.x])return true;return false;};
+ let w=320;while(w>110&&hits(w))w-=4;
+ document.getElementById("handleCanvas").width=Math.round(480*INSET_LEN);
+ if(probe){probe.remove();view.style.display="";}
+ inset.style.width=Math.round(w*INSET_LEN)+"px";}
+const INSET_LEN=1.2;
+addEventListener("resize",()=>{if(!document.getElementById("handleInset").hidden)render();});
+function bareCrop(key){const b=VIEWS[key].crop.bare,m=VIEWS.minibag.crop.bare;if(key==="minibag")return b;const v=VIEWS[key];
+ const cx=b.x+b.w/2,cy=b.y+b.h/2,x=Math.max(0,Math.min(v.w-m.w,Math.round(cx-m.w/2))),y=Math.max(0,Math.min(v.h-m.h,Math.round(cy-m.h/2)));return {x,y,w:m.w,h:m.h};}
+function ringMetal(product,sel){return product.ring==="standard"||sel.hook==="on"?sel.metal:"none";}
+function render(){
+ const P=prepared[state.product];if(!P)return;const product=productByKey[state.product],sel=cur(),{v}=P;
+ const c=sel.chain==="none"?bareCrop(state.product):v.crop.chain;
+ const canvas=document.getElementById("view");if(canvas.width!==c.w||canvas.height!==c.h){canvas.width=c.w;canvas.height=c.h;}
+ const ctx=canvas.getContext("2d");ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,c.w,c.h);ctx.translate(-c.x,-c.y);
+ const rm=ringMetal(product,sel),showRing=sel.chain==="none"&&rm!=="none",drawRing=()=>{const r=v.ring;ctx.drawImage(rings[rm],r.cx-r.d/2,r.cy-r.d/2,r.d,r.d);};
+ if(showRing)drawRing();
+ if(sel.chain!=="none")for(const d of v.dRings||[])ctx.drawImage(rings[sel.metal],d.cx-d.w/2,d.cy-d.h/2,d.w,d.h);
+ const hookChain=sel.chain!=="none"&&product.ring==="hook"&&sel.hook==="on"?P.chainHookImgs[sel.metal]:null;
+ if(hookChain)ctx.drawImage(hookChain,0,0);
+ renderBag(P,sel);ctx.drawImage(P.offscreen,0,0);
+ if(product.stitch&&v.stitchPath)drawStitch(ctx,v.stitchPath,sel.stitch);
+ if(sel.chain!=="none"&&!hookChain){if(P.chainImgs[sel.metal])ctx.drawImage(P.chainImgs[sel.metal],0,0);else{renderChain(P,sel.metal);ctx.drawImage(P.chainCanvas,0,0);}}
+ const croc=product.split?crocOf(sel.handle):null,inset=document.getElementById("handleInset");inset.hidden=!croc;if(croc){fitInset();drawHandleInset(croc,sel.metal);}
+ document.body.dataset.state=[state.product,sel.color,product.split?sel.body:"-",product.split?sel.handle:"-",sel.metal,product.stitch?sel.stitch:"-",rm,sel.chain].join("/");
+}
+const labelOf=(list,v)=>list.find(x=>x.value===v).label;
+const ITEM_MARK="◻︎";
+function summaryLines(){
+ const product=productByKey[state.product],sel=cur(),color=colorByKey[sel.color];
+ const OPT="（オプション）";
+ const leatherLines=product.split?["本体："+colorByKey[sel.body].label,"フタ："+color.label].concat(crocOf(sel.handle)?["ハンドル："+crocOf(sel.handle).label+OPT]:[]):["カラー："+color.label+(matOf(color)==="calf"?"":"（"+MATERIALS[matOf(color)]+"）")];
+ const lines=["アイテム："+product.label,...leatherLines];
+ if(product.stitch)lines.push("ステッチ："+(sel.stitch==="black"?"黒"+OPT:"白"));
+ lines.push("金具カラー："+labelOf(METALS,sel.metal));
+ if(product.ring==="hook"&&sel.hook==="on")lines.push("フック取り付け：あり"+OPT);
+ if(sel.chain==="on")lines.push("チェーン：あり"+OPT);
+ return lines.map(s=>ITEM_MARK+s);
+}
+function toggleButtons(boxId,list,getter,setter){
+ const box=document.getElementById(boxId);box.innerHTML="";
+ for(const it of list){const b=document.createElement("button");b.type="button";b.className="toggle";b.dataset.value=it.value;b.innerHTML="<strong"+(it.small?" class=\"sm\"":"")+">"+(it.lines?it.lines.map(t=>"<span class=\"pl\">"+t+"</span>").join(""):it.parts?it.parts.map(t=>"<span class=\"nb\">"+t+"</span>").join(" "):it.label)+"</strong>"+(it.sub?"<small>"+it.sub+"</small>":"");b.addEventListener("click",()=>{setter(it.value);updateControls();render();});
+  if(it.url){const col=document.createElement("div");col.className="product-col";const a=document.createElement("a");a.className="official-link";a.href=it.url;a.target="_blank";a.rel="noopener";
+  for(const t of ["商品ページを","確認する ↗"]){const sp=document.createElement("span");sp.textContent=t;a.appendChild(sp);}col.append(b,a);box.appendChild(col);}
+  else box.appendChild(b);}
+ box._getter=getter;
+}
+function swatchGrid(mat,getKey,setKey,label){const grid=document.createElement("div");grid.className="swatches";grid.setAttribute("aria-label",label);
+ for(const c of COLORS.filter(c=>matOf(c)===mat)){const b=document.createElement("button");b.type="button";b.className="swatch";b.dataset.value=c.key;b.style.background=c.hex;b.title=c.label;b.setAttribute("aria-label",c.label+"（"+MATERIALS[mat]+"）");b.addEventListener("click",()=>{setKey(c.key);updateControls();render();});grid.appendChild(b);}
+ grid._getter=getKey;return grid;}
+function buildSwatches(){
+ const product=productByKey[state.product],box=document.getElementById("leatherSwatches");box.innerHTML="";
+ document.getElementById("mainPartLabel").textContent=product.split?"フタ":"カラー";
+ const bodyPart=document.getElementById("bodyPart"),bodyBox=document.getElementById("bodySwatches");bodyPart.hidden=!product.split;bodyBox.innerHTML="";
+ if(product.split){box.appendChild(swatchGrid("calf",()=>cur().color,k=>{cur().color=k;},"フタの革色"));bodyBox.appendChild(swatchGrid("calf",()=>cur().body,k=>{cur().body=k;},"本体の革色"));return;}
+ for(const mat of product.materials){
+  if(product.materials.length>1){const l=document.createElement("span");l.className="material-label";l.textContent=MATERIALS[mat];box.appendChild(l);}
+  const grid=document.createElement("div");grid.className="swatches";grid.setAttribute("aria-label",MATERIALS[mat]+"の革色");
+  for(const c of COLORS.filter(c=>matOf(c)===mat)){const b=document.createElement("button");b.type="button";b.className="swatch";b.dataset.value=c.key;b.style.background=c.hex;b.title=c.label;b.setAttribute("aria-label",c.label+"（"+MATERIALS[mat]+"）");b.addEventListener("click",()=>{cur().color=c.key;updateControls();render();});grid.appendChild(b);}
+  box.appendChild(grid);
+ }
+}
+function updateControls(){
+ syncCopyButtons();
+ const product=productByKey[state.product],sel=cur();
+ for(const g of document.querySelectorAll("#leatherSwatches .swatches, #bodySwatches .swatches")){const k=g._getter?g._getter():sel.color;for(const b of g.querySelectorAll(".swatch"))b.setAttribute("aria-pressed",String(b.dataset.value===k));}
+ for(const id of ["productControls","handleControls","metalControls","stitchControls","hookControls","chainControls"]){const box=document.getElementById(id);for(const b of box.querySelectorAll(".toggle"))b.setAttribute("aria-pressed",String(b.dataset.value===box._getter()));}
+ document.getElementById("stitchBox").hidden=!product.stitch;
+ document.getElementById("handleBox").hidden=!product.split;
+ document.getElementById("hookBox").hidden=product.ring!=="hook";
+ const summaryHtml=s=>{const t=s.startsWith(ITEM_MARK)?s.slice(ITEM_MARK.length):s,i=t.indexOf("：")+1;return '<span class="item"><span class="hd"><span class="mk">'+ITEM_MARK+"</span>"+t.slice(0,i)+"</span>"+t.slice(i).split(" ").map(w=>w.split(/(?=（)/).map(x=>'<span class="w">'+x+"</span>").join("")).join(" ")+"</span>";};
+ document.getElementById("summaryText").innerHTML="<b>選択中</b>"+summaryLines().map(summaryHtml).join("");
+ const blackStitch=product.stitch&&sel.stitch==="black",hook=product.ring==="hook"&&sel.hook==="on",chain=sel.chain==="on",crocHandle=!!(product.split&&crocOf(sel.handle));
+ document.getElementById("handleNote").hidden=!crocHandle;
+ document.getElementById("stitchNote").hidden=!blackStitch;
+ document.getElementById("hookNote").hidden=!hook;
+ document.getElementById("chainNote").hidden=!chain;
+ document.getElementById("summaryNote").textContent="※コピーはメモとしてお使いください。"+(blackStitch||hook||chain||crocHandle?"\n※オプションは個別でカートにお入れください。":"");
+}
+const COPY_BUTTON_IDS=["copySummary","copySummaryTop"],copyLabels={};
+function resetCopyButtons(){for(const id of COPY_BUTTON_IDS){const b=document.getElementById(id);if(!(id in copyLabels))copyLabels[id]=b.textContent;b.textContent=copyLabels[id];}}
+function setCopyButtons(label){resetCopyButtons();for(const id of COPY_BUTTON_IDS)document.getElementById(id).textContent=label;}
+let copiedText=null;
+function syncCopyButtons(){if(summaryLines().join("\n")!==copiedText){copiedText=null;resetCopyButtons();}}
+async function copySummary(){const text=summaryLines().join("\n");let label="コピーしました";try{await navigator.clipboard.writeText(text);}catch(e){label="コピーできませんでした";}if(text!==summaryLines().join("\n"))return;copiedText=text;setCopyButtons(label);}
+function setupUI(){
+ toggleButtons("productControls",PRODUCTS.map(p=>({value:p.key,label:p.label,url:p.url,lines:p.lines,small:p.small})),()=>state.product,v=>{state.product=v;buildSwatches();});
+ toggleButtons("handleControls",HANDLE_OPTIONS,()=>cur().handle,v=>{cur().handle=v;});
+ toggleButtons("metalControls",METALS,()=>cur().metal,v=>{cur().metal=v;});
+ toggleButtons("stitchControls",STITCHES,()=>cur().stitch,v=>{cur().stitch=v;});
+ toggleButtons("hookControls",HOOK_OPTIONS,()=>cur().hook,v=>{cur().hook=v;});
+ toggleButtons("chainControls",CHAIN_OPTIONS,()=>cur().chain,v=>{cur().chain=v;});
+ buildSwatches();
+ document.getElementById("copySummary").addEventListener("click",copySummary);
+ document.getElementById("copySummaryTop").addEventListener("click",copySummary);
+ updateControls();
+}
+async function boot(){
+ setupUI();
+ try{await Promise.all([loadRings(),loadCroc(),...Object.keys(VIEWS).map(prepare)]);render();document.getElementById("loading").classList.remove("show");document.body.dataset.ready="1";}
+ catch(e){document.getElementById("loading").textContent="読み込みエラー: "+e.message;document.body.dataset.ready="error";}
+}
+boot();
+</script>
+</body>
+</html>

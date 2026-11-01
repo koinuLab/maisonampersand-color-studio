@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAISON &amp;. COLOR STUDIO | メゾンアンパサンドカラースタジオ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Tinos&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#292725;--muted:#7e7870;--line:#e5dfd6;--accent:#94785e;--page:#ffffff;--error:#b23a2e}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--page);color:var(--ink);font-family:"Hiragino Sans","Yu Gothic",sans-serif}button,input{font:inherit}
+body{padding:32px 28px 56px}.shell{max-width:1440px;margin:auto}
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);padding:8px 4px 22px;margin-bottom:24px}
+.atelier{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(360px,.8fr);gap:24px;align-items:start}
+.stage-card{padding:0;position:sticky;top:12px;z-index:5}
+.stage-head{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:0 2px 10px}.stage-head h1{font-size:24px;font-weight:400;margin:0}
+.canvas-wrap{position:relative;border-radius:17px;overflow:hidden;background:#fff;border:1px solid var(--line)}
+.view{margin:0;padding:5% 6% 4%;display:grid;place-items:center}.view canvas{display:block;max-width:100%;max-height:min(68vh,720px);width:auto;height:auto}
+.stage-loading{position:absolute;inset:0;display:grid;place-items:center;background:rgba(255,255,255,.72);backdrop-filter:blur(5px);color:var(--muted);font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s}.stage-loading.show{opacity:1}
+.stage-foot{display:flex;justify-content:flex-end;align-items:center;padding:8px 2px 0;gap:12px;color:var(--muted);font-size:11px}.stage-foot button{border:0;background:transparent;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.controls{display:grid;gap:14px}.control-card h2{font-weight:400;margin:0 0 12px}
+.part-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.part{border:1px solid var(--line);border-radius:17px;padding:13px;background:#fff}
+.part-label,.metal-title{display:block;color:var(--ink);font-size:12px;font-weight:500;margin-bottom:6px}.metal-title{margin-bottom:8px}
+.swatches{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:8px}
+.swatch{min-width:0;border:none;border-radius:12px;aspect-ratio:1/1;padding:0;position:relative;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),0 2px 6px rgba(0,0,0,.16);transition:transform .15s ease,box-shadow .15s ease}
+.swatch:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),0 6px 12px rgba(0,0,0,.18)}
+.swatch[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink),0 2px 6px rgba(0,0,0,.16)}
+.swatch[aria-pressed="true"]::after{content:"";position:absolute;inset:5px;border:2px solid rgba(255,255,255,.95);border-radius:9px}
+.control-row{display:flex;gap:10px;flex-wrap:wrap}
+.toggle{flex:1;min-width:88px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;text-align:center;cursor:pointer;color:var(--muted);transition:all .16s}.toggle strong{display:block;color:var(--ink);font-size:12px;font-weight:500}
+.toggle[aria-pressed="true"]{border-color:var(--accent);background:#f5eee6;color:var(--accent);box-shadow:0 8px 18px rgba(148,120,94,.1)}
+.product-row .product-col{flex:1;min-width:120px;display:flex;flex-direction:column;align-items:center;gap:8px}.product-row .product-col .toggle{width:100%;min-width:0}
+.product-row .official-link{margin:0;font-size:11px;line-height:1.6;text-align:center}.product-row .official-link span{display:inline-block;text-decoration:underline;text-underline-offset:3px}
+.metal-box{border:1px solid var(--line);border-radius:17px;padding:13px;background:#fff;margin-top:12px}
+.metal-box[hidden],.part[hidden]{display:none}
+.toggle .pl{display:inline}
+@media(max-width:640px){.product-row .toggle .pl{display:block}.product-row .toggle strong.sm{font-size:11px}}
+.engrave-row{display:flex;align-items:center;gap:10px}.engrave-row[hidden]{display:none}
+.engrave-input{flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-family:"Times New Roman",Tinos,serif;font-size:20px;letter-spacing:.04em;color:var(--ink);background:#fff;outline:none}
+.engrave-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(148,120,94,.12)}
+.engrave-input::placeholder{color:#c4bdb3;font-family:"Hiragino Sans","Yu Gothic",sans-serif;font-size:13px;letter-spacing:0}
+.engrave-count{font-size:11px;color:var(--muted);white-space:nowrap;margin:0}.engrave-count.over{color:var(--error)}
+.note.engrave-error{color:var(--error)}
+.engrave-rule{margin-top:12px}
+.summary{border:1px solid var(--line);border-radius:17px;padding:13px;background:#fff;margin-top:12px}.summary-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.note{font-size:11px;line-height:1.7;color:var(--muted);margin:10px 0 0}.summary p{font-size:12px;line-height:1.8;margin:0;color:var(--muted)}.summary b{color:var(--ink);font-weight:500;font-size:12px}
+.copy{border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#fff;cursor:pointer;color:var(--accent);white-space:nowrap}
+:root{--display-font:Cinzel,"Trajan Pro","Cormorant Garamond",Georgia,serif}
+.brand{font-family:var(--display-font);font-weight:400;letter-spacing:.06em;font-size:clamp(20px,3.4vw,40px);line-height:1.15;color:#111;text-transform:uppercase}
+.brand .amp{letter-spacing:.08em}.brand .dot{margin-left:.02em}
+.stage-head h1,.control-card h2{font-family:var(--display-font);letter-spacing:.05em;color:#111}
+.stage-head h1{font-size:21px}.control-card h2{font-size:18px;margin:0 0 4px}
+.official-link{display:inline-block;font-size:12px;color:var(--accent);text-decoration:underline;text-underline-offset:3px;margin:8px 0 14px}
+.note{white-space:pre-line}.note[hidden]{display:none}
+@media(max-width:980px){body{padding:18px 14px 36px}.atelier{grid-template-columns:1fr}.stage-card{top:0;background:var(--page);padding-top:8px;margin:0 -14px;padding-left:14px;padding-right:14px;padding-bottom:8px;box-shadow:0 6px 10px -8px rgba(0,0,0,.25)}.view canvas{max-height:38vh}}
+@media(max-width:640px){.masthead{display:block}.stage-head h1{font-size:18px}.stage-head{padding-bottom:6px}.copy{margin-top:10px}.product-row .product-col{min-width:0}.product-row .toggle{padding:10px 6px}.product-row .official-link{font-size:10px}.engrave-input{font-size:18px}}
+#summaryText .w{display:inline-block}
+#summaryNote{margin-top:22px}
+#summaryText .item{display:block;padding-left:1em;text-indent:-1em}#summaryText .mk{display:inline-block;width:1em;text-indent:0}#summaryText .w{text-indent:0}#summaryText .hd{white-space:nowrap}
+</style>
+<style id="studio-nav-style">
+.masthead{flex-wrap:wrap}.studio-nav{flex:0 0 100%;display:flex;flex-wrap:wrap;gap:6px 20px;padding-top:10px;font-size:13px;line-height:1.6}.studio-nav a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}.studio-nav span{color:var(--ink);font-weight:600}@media (max-width:640px){.studio-nav{flex-wrap:nowrap;justify-content:space-between;gap:6px;white-space:nowrap;font-size:clamp(10px,3.3vw,13px)}}
+</style></head>
+<body>
+<div class="shell">
+<header class="masthead">
+  <div><div class="brand">MAISON <span class="amp">&amp;<span class="dot">.</span></span>&#8201; COLOR STUDIO</div></div>
+<nav class="studio-nav" aria-label="スタジオの切り替え"><a href="../charm/charms.html">チャーム</a><span aria-current="page">ネームタグ</span><a href="../mini-wallet/">ミニウォレット</a><a href="../mini-bag/">ツイストシリーズ</a></nav></header>
+<main class="atelier">
+  <section class="stage-card">
+    <div class="stage-head"><div><h1>Preview</h1></div></div>
+    <div class="canvas-wrap">
+      <figure class="view"><canvas id="view" aria-label="プレビュー"></canvas></figure>
+      <div id="loading" class="stage-loading show">素材を読み込んでいます…</div>
+    </div>
+    <div class="stage-foot"><button id="copySummaryTop" type="button">選択内容をコピー</button></div>
+  </section>
+  <aside class="controls">
+    <section class="control-card"><h2>Color selection</h2>
+      <div class="metal-box" style="margin-top:0"><div class="metal-title">アイテム</div><div class="control-row product-row" id="productControls"></div></div>
+      <div class="part-grid" style="margin-top:12px">
+        <div class="part"><span class="part-label">カラー</span><div id="leatherSwatches"></div></div>
+      </div>
+      
+      <div class="metal-box"><div class="metal-title">ステッチ</div><div class="control-row" id="stitchControls"></div><p class="note" id="stitchNote" hidden>※黒ステッチはオプションです</p></div>
+      <div class="metal-box" id="engraveBox"><div class="metal-title">刻印</div>
+        
+        <div class="control-row" id="engraveTypeControls"></div>
+        <div class="engrave-row" id="engraveTextRow" style="margin-top:10px"><input id="engraveInput" class="engrave-input" type="text" inputmode="latin" lang="en" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="お好きな文字を入力" aria-label="刻印の文字" aria-describedby="engraveError engraveRule"><p class="engrave-count" id="engraveCount"></p></div>
+        <p class="note engrave-error" id="engraveError" role="alert" hidden></p>
+        <p class="note" id="logoNote" hidden>※裏面にショップロゴが入ります</p>
+        <p class="note engrave-rule" id="engraveRule"></p>
+        <p class="note" id="symbolRule">◼︎ハート、ホース　文字大きさ約1cm
+　→ホース、ハートの刻印は単体のみになります。
+　※アルファベットや数字などとの組み合わせ不可</p>
+      </div>
+      <div class="metal-box"><div class="metal-title">刻印カラー</div><div class="control-row" id="textColorControls"></div><p class="note" id="textColorNote">※金具カラーは刻印カラーと同じになります</p></div>
+      
+      <div class="metal-box" id="ringBox"><div class="metal-title">リング</div><div class="control-row" id="ringControls"></div><p class="note" id="cordNote" hidden>※革紐が付属します</p><p class="note" id="ringNote" hidden>※リングはオプションです</p></div>
+      <div class="summary"><div class="summary-row"><p id="summaryText"></p><button id="copySummary" class="copy" type="button">コピー</button></div><p class="note" id="summaryNote">※コピーはメモとしてお使いください。</p></div>
+    </section>
+  </aside>
+</main>
+</div>
+<script>
+"use strict";
+const COLORS=[{"key": "black", "label": "ブラック", "hex": "#262522"}, {"key": "brick", "label": "ブリック", "hex": "#712926"}, {"key": "brown", "label": "ブラウン", "hex": "#ab6b58"}, {"key": "charcoal-gray", "label": "チャコールグレー", "hex": "#444345"}, {"key": "ciel-blue", "label": "シエルブルー", "hex": "#56aac8"}, {"key": "coral-pink", "label": "コーラルピンク", "hex": "#ff8870"}, {"key": "etoupe", "label": "エトープ", "hex": "#765a43"}, {"key": "gold", "label": "ゴールド", "hex": "#a65c2b"}, {"key": "greige", "label": "グレージュ", "hex": "#5c4c44"}, {"key": "ice-gray", "label": "アイスグレー", "hex": "#a5a5a5"}, {"key": "ivory", "label": "アイボリー", "hex": "#f3e9d3"}, {"key": "light-blue", "label": "ライトブルー", "hex": "#83e8e2"}, {"key": "lime-yellow", "label": "ライムイエロー", "hex": "#e5dc22"}, {"key": "mist-blue", "label": "ミストブルー", "hex": "#5e95a4"}, {"key": "navy", "label": "ネイビー", "hex": "#003d55"}, {"key": "orange", "label": "オレンジ", "hex": "#e98526"}, {"key": "pale-pink", "label": "ペールピンク", "hex": "#ffcae8"}, {"key": "pale-yellow", "label": "ペールイエロー", "hex": "#fcf1a4"}, {"key": "pink", "label": "ピンク", "hex": "#ff5979"}, {"key": "pistachio", "label": "ピスタチオ", "hex": "#a7b98a"}, {"key": "purple", "label": "パープル", "hex": "#752472"}, {"key": "red", "label": "レッド", "hex": "#a20028"}, {"key": "rose-pink", "label": "ローズピンク", "hex": "#a4217b"}, {"key": "royal-blue", "label": "ロイヤルブルー", "hex": "#0040c2"}];
+const VIEWS={"nametag": {"base": "assets/nametag.base.png", "masks": "assets/nametag.masks.png", "w": 365, "h": 857, "pxPerMm": 6.0071, "sizeMm": {"w": 40, "h": 58}, "parts": {"leather": {"baseLum": 0.486275, "baseL": 21.847, "kd": 27.28, "ku": 28, "pixels": 212593}, "metal": {"baseLum": 0.491758, "cx": 178.8, "cy": 404.8, "r": 28.1}, "stitch": {"baseLum": 0.845002, "pixels": 3022}}, "stitchPaths": [{"spacing": 18.39, "dashLength": 9.0, "radius": 2.5, "closed": false, "name": "pocket", "points": [[29.1, 519.0], [24.45, 829.31], [332.71, 825.55], [337.58, 509.0]]}, {"spacing": 18.39, "dashLength": 9.0, "radius": 2.5, "closed": false, "name": "flap", "points": [[228.5, 402.32], [227.82, 403.38], [227.12, 404.48], [226.37, 405.64], [225.59, 406.85], [224.79, 408.1], [223.98, 409.36], [223.17, 410.62], [222.36, 411.87], [221.57, 413.12], [220.78, 414.34], [220.0, 415.55], [219.23, 416.75], [218.47, 417.93], [217.72, 419.1], [216.97, 420.27], [216.22, 421.42], [215.48, 422.58], [214.75, 423.72], [214.01, 424.87], [213.27, 426.02], [212.53, 427.17], [211.78, 428.33], [211.03, 429.5], [210.28, 430.67], [209.51, 431.86], [208.74, 433.07], [207.95, 434.29], [207.16, 435.53], [206.35, 436.79], [205.52, 438.07], [204.69, 439.37], [203.84, 440.69], [202.97, 442.04], [202.09, 443.4], [201.17, 444.78], [200.17, 446.15], [199.04, 447.46], [197.74, 448.68], [196.28, 449.81], [194.74, 450.87], [193.16, 451.89], [191.57, 452.86], [189.95, 453.75], [188.28, 454.55], [186.56, 455.25], [184.8, 455.84], [183.0, 456.34], [181.17, 456.75], [179.31, 457.07], [177.43, 457.29], [175.54, 457.43], [173.63, 457.47], [171.72, 457.41], [169.82, 457.25], [167.91, 456.99], [166.02, 456.64], [164.15, 456.18], [162.29, 455.64], [160.46, 455.02], [158.66, 454.31], [156.88, 453.53], [155.13, 452.68], [153.42, 451.76], [151.74, 450.77], [150.1, 449.71], [148.5, 448.59], [146.95, 447.41], [145.44, 446.16], [143.99, 444.86], [142.58, 443.5], [141.24, 442.08], [139.95, 440.61], [138.72, 439.09], [137.56, 437.52], [136.47, 435.91], [135.45, 434.25], [134.5, 432.55], [133.62, 430.81], [132.82, 429.04], [132.1, 427.24], [131.46, 425.42], [130.91, 423.57], [130.46, 421.7], [130.11, 419.81], [129.87, 417.91], [129.75, 415.99], [129.77, 414.08], [129.91, 412.17], [130.2, 410.28], [130.63, 408.41], [131.18, 406.55], [131.83, 404.71], [132.57, 402.89], [133.38, 401.08], [134.26, 399.31], [135.2, 397.59], [136.16, 395.93], [137.12, 394.34], [138.04, 392.81], [138.92, 391.36], [139.76, 389.99], [140.55, 388.68], [141.32, 387.42], [142.06, 386.19], [142.8, 384.98], [143.53, 383.77], [144.27, 382.56], [145.0, 381.35], [145.74, 380.14], [146.48, 378.92], [147.22, 377.7], [147.97, 376.46], [148.75, 375.18], [149.55, 373.86], [150.38, 372.49], [151.25, 371.06], [152.14, 369.59], [153.05, 368.1], [153.96, 366.59], [154.87, 365.1], [155.76, 363.63], [156.63, 362.19], [157.49, 360.79], [158.33, 359.41]]}], "engrave": {"cx": 181.5, "cy": 634.4}}, "osanpo": {"base": "assets/osanpo.base.png", "logo": "assets/osanpo.logo.png", "w": 693, "h": 313, "pxPerMm": 7.363815683061354, "sizeMm": {"w": 92, "h": 40}, "parts": {"leather": {"baseLum": 0.760784, "baseL": 78.431, "kd": 30, "ku": 5, "grainScale": false}}, "hole": {"cx": 607.1, "cy": 84.3, "r": 17.9}, "ring": {"cx": 755.3, "cy": -92.3, "outerMm": 32, "angle": -50, "gapMm": 6, "distMm": 31.3}, "logoBox": [553, 208, 606, 254], "stitchPath": {"spacing": 24, "dashLength": 10, "radius": 2.5, "closed": true, "points": [[603, 34], [629, 39], [651, 58], [663, 79], [667, 99], [660, 128], [644, 151], [645, 160], [654, 170], [661, 187], [665, 209], [663, 226], [644, 259], [628, 271], [611, 278], [581, 283], [551, 277], [534, 269], [490, 237], [457, 228], [267, 225], [221, 230], [199, 242], [179, 260], [146, 279], [120, 286], [99, 286], [78, 281], [57, 269], [40, 252], [28, 230], [25, 210], [28, 193], [36, 173], [52, 150], [37, 126], [32, 110], [33, 85], [37, 71], [49, 52], [60, 42], [75, 33], [109, 26], [141, 31], [166, 44], [196, 69], [214, 78], [230, 81], [408, 84], [478, 80], [495, 74], [527, 49], [549, 40], [580, 33]]}, "engrave": {"cx": 346.0, "cy": 153.1}}};
+const SYMBOLS={"heart": {"file": "assets/symbol-heart.png", "w": 384, "h": 300}, "horse": {"file": "assets/symbol-horse.png", "w": 1391, "h": 1724}};
+const ASSET_VERSION={"assets/nametag.base.png": "b2f59c87bd", "assets/nametag.masks.png": "c308e0ffd5", "assets/osanpo.base.png": "8007f9a5ed", "assets/osanpo.logo.png": "32a44fad7e", "assets/rings/ring-silver.png": "681f7c2198", "assets/rings/ring-gold.png": "f9d3b97b7c", "assets/symbol-heart.png": "730ea05e51", "assets/symbol-horse.png": "34aa1e04e1"};
+const OSANPO_REF_PPM=5.1667;
+const PRODUCTS=[
+ {key:"nametag",label:"ネームタグ",lines:["ネームタグ"],defaultColor:"gold",maxChars:7,ring:false,capMm:6,url:"https://canvasart-k.stores.jp/items/65530db74fbfd1002d673bd2"},
+ {key:"osanpo",label:"ネームタグ｟osanpo｠",lines:["ネームタグ","｟osanpo｠"],small:true,defaultColor:"ivory",maxChars:6,ring:true,displayScale:1.3*OSANPO_REF_PPM/VIEWS.nametag.pxPerMm,capMm:6,url:"https://canvasart-k.stores.jp/items/672ad29e22d85601614f1160"}
+];
+const STITCHES=[{value:"white",label:"白"},{value:"black",label:"黒"}];
+const ENGRAVE_TYPES=[{value:"text",label:"文字"},{value:"heart",label:"ハート"},{value:"horse",label:"ホース"}],SYMBOL_MM=10;
+const TEXT_COLORS=[{value:"gold",label:"ゴールド"},{value:"silver",label:"シルバー"}];
+const RING_OPTIONS=[{value:"none",label:"なし"},{value:"on",label:"あり"}];
+const QUERY=new URLSearchParams(location.search);
+const productByKey=Object.fromEntries(PRODUCTS.map(p=>[p.key,p]));
+const colorByKey=Object.fromEntries(COLORS.map(c=>[c.key,c]));
+const state={product:Object.hasOwn(productByKey,QUERY.get("product"))?QUERY.get("product"):"nametag",per:{}};
+const defaultsOf=p=>({color:p.defaultColor,stitch:"white",engraveType:"text",text:"",textColor:"gold",ring:"none"});
+const engraveLabel=sel=>sel.engraveType==="text"?sel.text:labelOf(ENGRAVE_TYPES,sel.engraveType);
+for(const p of PRODUCTS)state.per[p.key]=defaultsOf(p);
+const cur=()=>state.per[state.product];
+const metalOf=(p,sel)=>sel.textColor;
+const MAISON_CORE_VERSION="2026-10-17.3";
+function clamp(v){return Math.max(0,Math.min(255,v));}
+function hexToRgb(h){const n=parseInt(h.slice(1),16);return {r:n>>16&255,g:n>>8&255,b:n&255};}
+function srgbToLinear(v){v/=255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);}
+function linearToSrgb(v){return v<=.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-.055;}
+function rgbToLab(rgb){const r=srgbToLinear(rgb.r),g=srgbToLinear(rgb.g),b=srgbToLinear(rgb.b);const x=(r*.4124564+g*.3575761+b*.1804375)/.95047,y=(r*.2126729+g*.7151522+b*.072175)/1,z=(r*.0193339+g*.119192+b*.9503041)/1.08883;const f=v=>v>.008856?Math.cbrt(v):7.787*v+16/116;const fx=f(x),fy=f(y),fz=f(z);return {L:116*fy-16,a:500*(fx-fy),b:200*(fy-fz)};}
+function labToRgbRaw(L,a,b){const fy=(L+16)/116,fx=fy+a/500,fz=fy-b/200;const finv=t=>{const t3=t*t*t;return t3>.008856?t3:(t-16/116)/7.787;};const x=finv(fx)*.95047,y=finv(fy),z=finv(fz)*1.08883;return {r:linearToSrgb(x*3.2404542+y*-1.5371385+z*-0.4985314)*255,g:linearToSrgb(x*-.969266+y*1.8760108+z*.041556)*255,b:linearToSrgb(x*.0556434+y*-.2040259+z*1.0572252)*255};}
+const HIGHLIGHT_HEADROOM=.5;
+function flatLeatherTone(lum,lab,baseLum,kd,ku){
+ const ratio=Math.max(.35,Math.min(1.60,lum/Math.max(baseLum,.001)));
+ let L;if(ratio<1)L=lab.L+(ratio-1)*kd;else{const d=(ratio-1)*ku,head=Math.max(.001,(100-lab.L)*HIGHLIGHT_HEADROOM);L=lab.L+head*(1-Math.exp(-d/head));}
+ L=Math.max(0,Math.min(100,L));
+ let rgb=labToRgbRaw(L,lab.a,lab.b);
+ if([rgb.r,rgb.g,rgb.b].some(v=>v<0||v>255)){const C=Math.hypot(lab.a,lab.b),h=Math.atan2(lab.b,lab.a);let lo=0,hi=C;for(let i=0;i<20;i++){const mid=(lo+hi)/2,t=labToRgbRaw(L,Math.cos(h)*mid,Math.sin(h)*mid);if([t.r,t.g,t.b].every(v=>v>=0&&v<=255))lo=mid;else hi=mid;}rgb=labToRgbRaw(L,Math.cos(h)*lo,Math.sin(h)*lo);}
+ return {r:Math.round(clamp(rgb.r)),g:Math.round(clamp(rgb.g)),b:Math.round(clamp(rgb.b))};
+}
+const METAL_GLOSS={k:2.1,pivot:.42,shade:.5,specFrom:.68,specSpan:.3,spec:.75};
+const METAL_COLORS={silver:{hi:{r:243,g:246,b:252},sh:{r:109,g:118,b:130}},gold:{hi:{r:248,g:224,b:140},sh:{r:132,g:104,b:50}}};
+function metalTone(lum,mode){const G=METAL_GLOSS,hi=METAL_COLORS[mode].hi,sh0=METAL_COLORS[mode].sh;
+ let t=Math.max(0,Math.min(1,.5+(lum-G.pivot)*G.k));t=t*t*(3-2*t);
+ let r=sh0.r*G.shade*(1-t)+hi.r*t,g=sh0.g*G.shade*(1-t)+hi.g*t,b=sh0.b*G.shade*(1-t)+hi.b*t;
+ const sp=Math.pow(Math.max(0,Math.min(1,(lum-G.specFrom)/G.specSpan)),1.5)*G.spec;r=r*(1-sp)+255*sp;g=g*(1-sp)+255*sp;b=b*(1-sp)+255*sp;
+ if(mode==="gold"){const gray=(r+g+b)/3,mute=.04;r=r*(1-mute)+gray*mute;g=g*(1-mute)+gray*mute;b=b*(1-mute)+gray*mute;}
+ return {r:clamp(r),g:clamp(g),b:clamp(b)};}
+const ENGRAVE_SYMBOLS=".-&・#/!?@+:";
+function charKind(ch){if(/^[A-Z]$/.test(ch))return "upper";if(/^[a-z]$/.test(ch))return "lower";if(/^[0-9]$/.test(ch))return "digit";if(ENGRAVE_SYMBOLS.includes(ch))return "symbol";return null;}
+function charLimit(ch){const k=charKind(ch);return k==="upper"?3:k==="lower"?2:k==="digit"?(ch==="1"?4:2):k==="symbol"?1:0;}
+const KIND_LABEL={upper:"大文字",lower:"小文字",digit:"数字",symbol:"記号"};
+function toHalfWidth(s){return s.replace(/[！-～]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/\u3000/g," ").replace(/･/g,"・").replace(/[‐‑‒–—―ー－]/g,"-");}
+function engravingProblems(text,max){
+ const chars=[...text],out=[],count={};
+ for(const ch of chars)count[ch]=(count[ch]||0)+1;
+ const bad=[...new Set(chars.filter(ch=>!charLimit(ch)))];
+ if(bad.some(ch=>/\s/.test(ch)))out.push("空白は刻印できません。");
+ for(const ch of bad.filter(ch=>!/\s/.test(ch)))out.push("「"+ch+"」は刻印できない文字です。");
+ if(chars.length>max)out.push("刻印は "+max+" 文字までです。");
+ for(const [ch,n] of Object.entries(count)){const lim=charLimit(ch);if(lim&&n>lim)out.push(KIND_LABEL[charKind(ch)]+"の「"+ch+"」は "+lim+" つまでです。");}
+ return out;
+}
+const ruleText=max=>"◼ アルファベット大文字(A～Z)：各3文字まで\n　小文字(a～z)：各2文字まで\n　数字(0～9)：各2文字まで（※「1」のみ4文字まで）\n　記号(.-&･#/!?@+:)：各1文字まで\n　刻印文字のサイズ：縦約6mm\n　↪上記を組み合わせた1〜"+max+"文字までとなります。\n　※大文字と小文字の可能数にご注意下さい。";
+const ENGRAVE_FONT='"Times New Roman", Tinos, serif';
+const FOIL={gold:{mid:.5,grain:.2},silver:{mid:.44,grain:.2}};
+const DEBOSS_DARK=.22,DEBOSS_BLUR_PX=1.1;
+function engravingMasks(w,h,draw){
+ const c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d",{willReadFrequently:true});
+ g.fillStyle="#fff";draw(g);const glyph=g.getImageData(0,0,w,h).data;
+ g.clearRect(0,0,w,h);g.filter="blur("+DEBOSS_BLUR_PX+"px)";draw(g);g.filter="none";
+ const halo=g.getImageData(0,0,w,h).data,n=w*h,ga=new Float32Array(n),ha=new Float32Array(n);
+ for(let p=0;p<n;p++){ga[p]=glyph[p*4+3]/255;ha[p]=Math.max(0,halo[p*4+3]/255-ga[p]);}
+ return {glyph:ga,halo:ha};
+}
+function drawText(g,text,cx,cy,ppm,capMm){
+ g.font="100px "+ENGRAVE_FONT;const capPer100=g.measureText("H").actualBoundingBoxAscent||66.2,up=capMm*ppm*100/capPer100,fontOf=()=>up+"px "+ENGRAVE_FONT;
+ const chars=[...text].map(ch=>ch==="・"?"·":ch);let total=0;const adv=chars.map(ch=>{g.font=fontOf(ch);const a=g.measureText(ch).width;total+=a;return a;});
+ g.font=up+"px "+ENGRAVE_FONT;const capH=g.measureText("H").actualBoundingBoxAscent;
+ const base=cy+capH/2;let x=cx-total/2;
+ g.textBaseline="alphabetic";
+ chars.forEach((ch,i)=>{g.font=fontOf(ch);g.fillText(ch,x,base);x+=adv[i];});
+}
+function drawSymbol(g,im,cx,cy,ppm){const k=SYMBOL_MM*ppm/Math.max(im.naturalWidth,im.naturalHeight),w=im.naturalWidth*k,h=im.naturalHeight*k;g.drawImage(im,cx-w/2,cy-h/2,w,h);}
+const LUT_STEPS=1021,lutCache=new Map();
+function makeLut(key,fn){if(lutCache.has(key))return lutCache.get(key);const t=new Uint8ClampedArray(LUT_STEPS*3);for(let i=0;i<LUT_STEPS;i++){const c=fn(i/1020);t[i*3]=c.r;t[i*3+1]=c.g;t[i*3+2]=c.b;}lutCache.set(key,t);return t;}
+const GRAIN_SCALE_MIN=.4;
+function leatherLut(hex,part){const lab=rgbToLab(hexToRgb(hex)),s=part.grainScale===false?1:Math.max(GRAIN_SCALE_MIN,Math.min(1,lab.L/part.baseL));return makeLut(hex+"|"+part.baseLum+"|"+part.kd+"|"+part.ku+"|"+s,l=>flatLeatherTone(l,lab,part.baseLum,part.kd*s,part.ku*s));}
+const METAL_CONTRAST=1.35,METAL_MID=.4;
+function metalLut(mode,baseLum){return makeLut("metal|"+mode+"|"+baseLum,l=>metalTone(Math.max(0,Math.min(1,METAL_MID+(l-baseLum)*METAL_CONTRAST)),mode));}
+const FOIL_GOLD_YELLOW=1.3;
+function foilTone(l,mode){const c=metalTone(l,mode);if(mode!=="gold")return c;const lab=rgbToLab(c),t=labToRgbRaw(lab.L,lab.a,lab.b*FOIL_GOLD_YELLOW);return {r:clamp(t.r),g:clamp(t.g),b:clamp(t.b)};}
+function foilLut(mode){return makeLut("foil|"+mode,l=>foilTone(l,mode));}
+const foilIndex=(mode,ratio)=>Math.round(Math.max(0,Math.min(1,FOIL[mode].mid+(ratio-1)*FOIL[mode].grain))*1020)*3;
+function stitchTone(lum,mode,baseLum){const k=Math.max(.55,Math.min(1.08,lum/Math.max(baseLum,.001)));const c=mode==="black"?{r:44,g:42,b:40}:{r:246,g:243,b:236};const add=mode==="black"?(k-1)*60:0;return {r:clamp(c.r*(mode==="black"?1:k)+add),g:clamp(c.g*(mode==="black"?1:k)+add),b:clamp(c.b*(mode==="black"?1:k)+add)};}
+function stitchLut(mode,baseLum){return makeLut("stitch|"+mode+"|"+baseLum,l=>stitchTone(l,mode,baseLum));}
+const STITCH_COLORS={white:"#f5f2ea",black:"#2a2826"};
+const stitchPathsOf=v=>(v.stitchPaths||[]).concat(v.stitchPath?[v.stitchPath]:[]);
+function drawPathStitch(ctx,sp,mode){
+ const path=new Path2D();sp.points.forEach(([x,y],i)=>i?path.lineTo(x,y):path.moveTo(x,y));if(sp.closed)path.closePath();
+ const w=sp.radius*2;ctx.save();ctx.lineCap="round";ctx.lineJoin="round";ctx.setLineDash([sp.dashLength,sp.spacing-sp.dashLength]);ctx.lineDashOffset=-(sp.spacing-sp.dashLength)/2;
+ ctx.translate(.6,.9);ctx.strokeStyle="rgba(0,0,0,.22)";ctx.lineWidth=w+1;ctx.stroke(path);ctx.translate(-.6,-.9);
+ ctx.strokeStyle=STITCH_COLORS[mode];ctx.lineWidth=w;ctx.stroke(path);ctx.restore();
+}
+function loadImage(src){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(new Error("load failed: "+src));im.src=src;});}
+function pixels(im){const c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext("2d",{willReadFrequently:true});x.drawImage(im,0,0);return x.getImageData(0,0,c.width,c.height);}
+function lumIndex(img){const d=img.data,n=d.length/4,out=new Uint16Array(n);for(let p=0,i=0;p<n;p++,i+=4)out[p]=Math.round((.2126*d[i]+.7152*d[i+1]+.0722*d[i+2])*4);return out;}
+const v_=src=>src+"?v="+(ASSET_VERSION[src]||"");
+const prepared={},rings={};
+async function prepare(name){
+ const v=VIEWS[name],keys=["base","masks","stitch","logo"].filter(k=>v[k]),ims=await Promise.all(keys.map(k=>loadImage(v_(v[k]))));
+ const P={name,v,offscreen:document.createElement("canvas"),engraveCache:{}};keys.forEach((k,i)=>P[k]=pixels(ims[i]));
+ P.offscreen.width=v.w;P.offscreen.height=v.h;P.lum=lumIndex(P.base);
+ if(P.stitch)P.stitchLum=lumIndex(P.stitch);
+ if(P.logo){P.logoLum=lumIndex(P.logo);const ls=[];for(let p=0;p<P.logoLum.length;p++)if(P.logo.data[p*4+3]>128)ls.push(P.logoLum[p]);ls.sort((a,b)=>a-b);P.logoBase=ls[ls.length>>1]||1;}
+ prepared[name]=P;
+}
+async function loadRings(){for(const m of ["silver","gold"])rings[m]=await loadImage(v_("assets/rings/ring-"+m+".png"));}
+function engravingOf(P,sel){const type=sel.engraveType,text=type==="text"?sel.text:"",key=type+"|"+text;if(type==="text"&&!text)return null;if(P.engraveCache.key===key)return P.engraveCache.m;
+ const e=P.v.engrave,ppm=P.v.pxPerMm,m=engravingMasks(P.v.w,P.v.h,g=>type==="text"?drawText(g,text,e.cx,e.cy,ppm,productByKey[P.name].capMm):drawSymbol(g,symbolImgs[type],e.cx,e.cy,ppm));P.engraveCache={key,m};return m;}
+const symbolImgs={};
+async function loadSymbols(){for(const [k,s] of Object.entries(SYMBOLS))symbolImgs[k]=await loadImage(v_(s.file));}
+function renderProduct(P,sel){
+ const {v,base,offscreen}=P,product=productByKey[P.name],part=v.parts.leather,leather=leatherLut(colorByKey[sel.color].hex,part);
+ const out=new ImageData(v.w,v.h),od=out.data,bd=base.data,lum=P.lum,md=P.masks?P.masks.data:null;
+ const metal=md?metalLut(metalOf(product,sel),v.parts.metal.baseLum):null;
+ const sd=P.stitch?P.stitch.data:null,sl=P.stitchLum,stitch=sd?stitchLut(sel.stitch,v.parts.stitch.baseLum):null;
+ const eng=engravingOf(P,sel),foil=foilLut(sel.textColor),bl=part.baseLum*1020;
+ const logo=P.logo&&!engraveLabel(sel)?P.logo.data:null,ll=P.logoLum,lb=P.logoBase;
+ for(let p=0,i=0;p<lum.length;p++,i+=4){const a=bd[i+3];if(a===0)continue;
+  const lL=lum[p]*3;let r=leather[lL],g=leather[lL+1],b=leather[lL+2];
+  if(md){const wm=md[i+1]/255;if(wm>0){const k=lum[p]*3;r=r*(1-wm)+metal[k]*wm;g=g*(1-wm)+metal[k+1]*wm;b=b*(1-wm)+metal[k+2]*wm;}}
+  if(sd){const ws=sd[i+3]/255;if(ws>0){const k=sl[p]*3;r=r*(1-ws)+stitch[k]*ws;g=g*(1-ws)+stitch[k+1]*ws;b=b*(1-ws)+stitch[k+2]*ws;}}
+  if(logo){const wl=logo[i+3]/255;if(wl>0){const k=foilIndex(sel.textColor,ll[p]/lb);r=r*(1-wl)+foil[k]*wl;g=g*(1-wl)+foil[k+1]*wl;b=b*(1-wl)+foil[k+2]*wl;}}
+  if(eng){const hd=eng.halo[p]*DEBOSS_DARK;if(hd>0){r*=1-hd;g*=1-hd;b*=1-hd;}const wt=eng.glyph[p];if(wt>0){const k=foilIndex(sel.textColor,lum[p]/bl);r=r*(1-wt)+foil[k]*wt;g=g*(1-wt)+foil[k+1]*wt;b=b*(1-wt)+foil[k+2]*wt;}}
+  od[i]=r;od[i+1]=g;od[i+2]=b;od[i+3]=a;}
+ const ctx=offscreen.getContext("2d");ctx.putImageData(out,0,0);
+ for(const sp of stitchPathsOf(v))drawPathStitch(ctx,sp,sel.stitch);
+}
+const STAGE_PPM=VIEWS.nametag.pxPerMm,STAGE_MARGIN_MM=4;
+function layoutOf(key){const v=VIEWS[key],k=productByKey[key].displayScale||1,s=STAGE_PPM/v.pxPerMm*k,box={x0:0,y0:0,x1:v.w*s,y1:v.h*s},L={key,s,item:{x:0,y:0,w:v.w*s,h:v.h*s}};
+ if(v.ring){const R=v.ring.outerMm*STAGE_PPM*k/2,cx=v.ring.cx*s,cy=v.ring.cy*s;
+  L.ring={x:cx-R,y:cy-R,d:2*R};box.x0=Math.min(box.x0,cx-R);box.y0=Math.min(box.y0,cy-R);box.x1=Math.max(box.x1,cx+R);box.y1=Math.max(box.y1,cy+R);}
+ L.box=box;return L;}
+const LAYOUTS=Object.fromEntries(PRODUCTS.map(p=>[p.key,layoutOf(p.key)]));
+const itemCenter=L=>({x:L.item.x+L.item.w/2,y:L.item.y+L.item.h/2});
+const halfW=L=>{const c=itemCenter(L);return Math.max(c.x-L.box.x0,L.box.x1-c.x);},halfH=L=>{const c=itemCenter(L);return Math.max(c.y-L.box.y0,L.box.y1-c.y);};
+const M=STAGE_MARGIN_MM*STAGE_PPM,STAGE_W=Math.ceil(2*Math.max(...Object.values(LAYOUTS).map(halfW))+2*M),STAGE_H=Math.ceil(2*Math.max(...Object.values(LAYOUTS).map(halfH))+2*M);
+function render(){
+ const P=prepared[state.product];if(!P)return;const product=productByKey[state.product],sel=cur(),L=LAYOUTS[state.product];
+ const canvas=document.getElementById("view");if(canvas.width!==STAGE_W||canvas.height!==STAGE_H){canvas.width=STAGE_W;canvas.height=STAGE_H;}
+ const ctx=canvas.getContext("2d");ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,STAGE_W,STAGE_H);
+ const rm=product.ring&&sel.ring==="on"?metalOf(product,sel):"none";
+ const ic=itemCenter(L),ox=STAGE_W/2-ic.x,oy=STAGE_H/2-ic.y;ctx.translate(ox,oy);
+ if(L.ring&&rm!=="none")ctx.drawImage(rings[rm],L.ring.x,L.ring.y,L.ring.d,L.ring.d);
+ renderProduct(P,sel);ctx.imageSmoothingQuality="high";ctx.drawImage(P.offscreen,L.item.x,L.item.y,L.item.w,L.item.h);
+ document.body.dataset.state=[state.product,sel.color,sel.stitch,sel.engraveType+":"+sel.text,sel.textColor,product.ring?"ring:"+sel.ring:"-"].join("/");
+}
+const labelOf=(list,v)=>list.find(x=>x.value===v).label;
+const ITEM_MARK="◻︎",OPT="（オプション）";
+function summaryLines(){
+ const product=productByKey[state.product],sel=cur();
+ const lines=["アイテム："+product.label,"カラー："+colorByKey[sel.color].label,"ステッチ："+(sel.stitch==="black"?"黒"+OPT:"白"),"刻印："+(engraveLabel(sel)||"なし"),"刻印カラー："+labelOf(TEXT_COLORS,sel.textColor)];
+ if(product.ring){if(sel.ring==="on")lines.push("リング：あり"+OPT,"金具カラー："+labelOf(TEXT_COLORS,metalOf(product,sel)));}
+ else lines.push("金具カラー："+labelOf(TEXT_COLORS,metalOf(product,sel)));
+ return lines.map(s=>ITEM_MARK+s);
+}
+function toggleButtons(boxId,list,getter,setter){
+ const box=document.getElementById(boxId);box.innerHTML="";
+ for(const it of list){const b=document.createElement("button");b.type="button";b.className="toggle";b.dataset.value=it.value;b.innerHTML="<strong"+(it.small?" class=\"sm\"":"")+">"+(it.lines?it.lines.map(t=>"<span class=\"pl\">"+t+"</span>").join(""):it.label)+"</strong>";b.addEventListener("click",()=>{setter(it.value);updateControls();render();});
+  if(it.url){const col=document.createElement("div");col.className="product-col";const a=document.createElement("a");a.className="official-link";a.href=it.url;a.target="_blank";a.rel="noopener";
+  for(const t of ["商品ページを","確認する ↗"]){const sp=document.createElement("span");sp.textContent=t;a.appendChild(sp);}col.append(b,a);box.appendChild(col);}
+  else box.appendChild(b);}
+ box._getter=getter;
+}
+function buildSwatches(){
+ const box=document.getElementById("leatherSwatches");box.innerHTML="";const grid=document.createElement("div");grid.className="swatches";grid.setAttribute("aria-label","革の色");
+ for(const c of COLORS){const b=document.createElement("button");b.type="button";b.className="swatch";b.dataset.value=c.key;b.style.background=c.hex;b.title=c.label;b.setAttribute("aria-label",c.label);b.addEventListener("click",()=>{cur().color=c.key;updateControls();render();});grid.appendChild(b);}
+ box.appendChild(grid);
+}
+function updateControls(){
+ syncCopyButtons();
+ const product=productByKey[state.product],sel=cur();
+ for(const b of document.querySelectorAll("#leatherSwatches .swatch"))b.setAttribute("aria-pressed",String(b.dataset.value===sel.color));
+ for(const id of ["productControls","stitchControls","engraveTypeControls","textColorControls","ringControls"]){const box=document.getElementById(id);for(const b of box.querySelectorAll(".toggle"))b.setAttribute("aria-pressed",String(b.dataset.value===box._getter()));}
+ const input=document.getElementById("engraveInput");if(input.value!==sel.text&&document.activeElement!==input)input.value=sel.text;
+ const cnt=document.getElementById("engraveCount"),n=[...sel.text].length;cnt.textContent=n+" / "+product.maxChars+" 文字";cnt.classList.toggle("over",n>product.maxChars);
+ const probs=sel.engraveType==="text"?engravingProblems(sel.text,product.maxChars):[],err=document.getElementById("engraveError");
+ err.textContent=probs.map(x=>"※"+x).join("\n");err.hidden=!probs.length;
+ document.getElementById("engraveRule").textContent=ruleText(product.maxChars);
+ document.getElementById("logoNote").hidden=!(product.key==="nametag"||engraveLabel(sel));
+ document.getElementById("engraveTextRow").hidden=sel.engraveType!=="text";
+ document.getElementById("ringBox").hidden=!product.ring;
+ const ring=product.ring&&sel.ring==="on",blackStitch=sel.stitch==="black";
+ document.getElementById("cordNote").hidden=!(product.ring&&sel.ring==="none");
+ document.getElementById("ringNote").hidden=!ring;
+ document.getElementById("stitchNote").hidden=!blackStitch;
+ const summaryHtml=s=>{const t=s.startsWith(ITEM_MARK)?s.slice(ITEM_MARK.length):s,i=t.indexOf("：")+1;return '<span class="item"><span class="hd"><span class="mk">'+ITEM_MARK+"</span>"+esc(t.slice(0,i))+"</span>"+t.slice(i).split(" ").map(w=>w.split(/(?=（)/).map(x=>'<span class="w">'+esc(x)+"</span>").join("")).join(" ")+"</span>";};
+ document.getElementById("summaryText").innerHTML="<b>選択中</b>"+summaryLines().map(summaryHtml).join("");
+ document.getElementById("summaryNote").textContent="※コピーはメモとしてお使いください。"+(blackStitch||ring?"\n※オプションは個別でカートにお入れください。":"");
+}
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function onEngraveInput(e){
+ const input=e.target;if(e.isComposing)return;
+ const text=toHalfWidth(input.value);
+ if(input.value!==text){const pos=input.selectionStart;input.value=text;try{input.setSelectionRange(pos,pos);}catch(_){}}
+ if(cur().text!==text){cur().text=text;updateControls();render();}
+}
+const COPY_BUTTON_IDS=["copySummary","copySummaryTop"],copyLabels={};
+function resetCopyButtons(){for(const id of COPY_BUTTON_IDS){const b=document.getElementById(id);if(!(id in copyLabels))copyLabels[id]=b.textContent;b.textContent=copyLabels[id];}}
+function setCopyButtons(label){resetCopyButtons();for(const id of COPY_BUTTON_IDS)document.getElementById(id).textContent=label;}
+let copiedText=null;
+function syncCopyButtons(){if(summaryLines().join("\n")!==copiedText){copiedText=null;resetCopyButtons();}}
+async function copySummary(){const text=summaryLines().join("\n");let label="コピーしました";try{await navigator.clipboard.writeText(text);}catch(e){label="コピーできませんでした";}if(text!==summaryLines().join("\n"))return;copiedText=text;setCopyButtons(label);}
+function setupUI(){
+ toggleButtons("productControls",PRODUCTS.map(p=>({value:p.key,label:p.label,url:p.url,lines:p.lines,small:p.small})),()=>state.product,v=>{state.product=v;document.getElementById("engraveInput").value=cur().text;});
+ toggleButtons("stitchControls",STITCHES,()=>cur().stitch,v=>{cur().stitch=v;});
+ toggleButtons("engraveTypeControls",ENGRAVE_TYPES,()=>cur().engraveType,v=>{cur().engraveType=v;});
+ toggleButtons("textColorControls",TEXT_COLORS,()=>cur().textColor,v=>{cur().textColor=v;});
+ toggleButtons("ringControls",RING_OPTIONS,()=>cur().ring,v=>{cur().ring=v;});
+ buildSwatches();
+ const input=document.getElementById("engraveInput");input.addEventListener("input",onEngraveInput);input.addEventListener("compositionend",onEngraveInput);
+ document.getElementById("copySummary").addEventListener("click",copySummary);
+ document.getElementById("copySummaryTop").addEventListener("click",copySummary);
+ updateControls();
+}
+async function boot(){
+ setupUI();
+ try{
+  await Promise.all([document.fonts.load('40px "Times New Roman"','A').catch(()=>{}),document.fonts.load("40px Tinos","A").catch(()=>{})]);
+  await Promise.all([loadRings(),loadSymbols(),...Object.keys(VIEWS).map(prepare)]);render();document.getElementById("loading").classList.remove("show");document.body.dataset.ready="1";}
+ catch(e){document.getElementById("loading").textContent="読み込みエラー: "+e.message;document.body.dataset.ready="error";}
+}
+boot();
+</script>
+</body>
+</html>
