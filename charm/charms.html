@@ -143,6 +143,9 @@ const CHARMS={
     "masks": "assets/charms/horseshoe.masks.png?v=96921059aa"
   },
   "frenchie": {
+    "displayTiltDeg": -1.25,
+    "displayTopPx": -556.7,
+    "displayBottomPx": 554.5,
     "label": "frenchie",
     "sizeMm": {
       "w": 60,
@@ -171,6 +174,9 @@ const CHARMS={
     "masks": "assets/charms/frenchie.masks.png"
   },
   "dachshund": {
+    "displayTiltDeg": -5.2,
+    "displayTopPx": -301.5,
+    "displayBottomPx": 299.4,
     "label": "dachshund",
     "sizeMm": {
       "w": 90,
@@ -199,6 +205,9 @@ const CHARMS={
     "masks": "assets/charms/dachshund.masks.png?v=763838488e"
   },
   "toypoodle": {
+    "displayTiltDeg": -2.83,
+    "displayTopPx": -361.3,
+    "displayBottomPx": 360.8,
     "label": "toy poodle",
     "sizeMm": {
       "w": 80,
@@ -255,6 +264,9 @@ const CHARMS={
     "masks": "assets/charms/osanpo.masks.png?v=37d74502a9"
   },
   "cat": {
+    "displayTiltDeg": -2.92,
+    "displayTopPx": -356.5,
+    "displayBottomPx": 349.5,
     "label": "cat",
     "sizeMm": {
       "w": 68,
@@ -965,10 +977,19 @@ function computeLayout(leftKey,rightKey){
  const placements=[];
  if(keys.length===1){const d=dims[0],bbox=CHARMS[d.key].bboxPx,fg=CHARMS[d.key].fgBboxPx;placements[d.side]={key:d.key,x:W/2-d.w/2-bbox.x/CHARMS[d.key].pxPerMm,y:groupTop+(maxH-d.h)/2-fg.y/CHARMS[d.key].pxPerMm,w:d.w,h:d.h,bounds:{x:W/2-d.w/2,y:groupTop+(maxH-d.h)/2,w:d.w,h:d.h}};}
  if(keys.length===2){const d0=dims[0],d1=dims[1],b0=CHARMS[d0.key].bboxPx,b1=CHARMS[d1.key].bboxPx,f0=CHARMS[d0.key].fgBboxPx,f1=CHARMS[d1.key].fgBboxPx;const rightEdge=W/2-bodyGap/2,leftEdge=W/2+bodyGap/2;const x0=rightEdge-d0.w,x1=leftEdge;placements[d0.side]={key:d0.key,x:x0-b0.x/CHARMS[d0.key].pxPerMm,y:groupTop+(maxH-d0.h)/2-f0.y/CHARMS[d0.key].pxPerMm,w:d0.w,h:d0.h,bounds:{x:x0,y:groupTop+(maxH-d0.h)/2,w:d0.w,h:d0.h}};placements[d1.side]={key:d1.key,x:x1-b1.x/CHARMS[d1.key].pxPerMm,y:groupTop+(maxH-d1.h)/2-f1.y/CHARMS[d1.key].pxPerMm,w:d1.w,h:d1.h,bounds:{x:x1,y:groupTop+(maxH-d1.h)/2,w:d1.w,h:d1.h}};}
- return {ring:{x:W/2-LAYOUT.ringOuterMm/2,y:ringCenterY-ringH/2,w:ringH,h:ringH},placements,keys,stage:{w:W,h:H},scale:stageN};
+ let ringTop=ringCenterY-ringH/2;
+ if(keys.length&&keys.every(k=>CHARMS[k].displayBottomPx!==undefined)){
+  const size=k=>{const c=CHARMS[k];return {cy:(c.fgBboxPx.y+c.fgBboxPx.h/2)/c.pxPerMm,top:c.displayTopPx/c.pxPerMm,bottom:c.displayBottomPx/c.pxPerMm};};
+  const heights=keys.map(k=>size(k).bottom-size(k).top),tallest=Math.max(...CHARM_KEYS.filter(k=>CHARMS[k].displayBottomPx!==undefined).map(k=>size(k).bottom-size(k).top));
+  const baseline=Math.max(LAYOUT.marginMm,(H-(ringH+gap+tallest))/2)+ringH+gap+tallest;
+  for(const p of placements){if(!p)continue;const c=size(p.key);const y=baseline-c.bottom-c.cy;p.bounds.y+=y-p.y;p.y=y;}
+  ringTop=baseline-Math.max(...heights)-gap-ringH;
+ }
+ return {ring:{x:W/2-LAYOUT.ringOuterMm/2,y:ringTop,w:ringH,h:ringH},placements,keys,stage:{w:W,h:H},scale:stageN};
 }
 function drawRing(ctx,bitmap,ring){ctx.drawImage(bitmap,ring.x*LAYOUT.pxPerMmStage,ring.y*LAYOUT.pxPerMmStage,ring.w*LAYOUT.pxPerMmStage,ring.h*LAYOUT.pxPerMmStage);}
-async function drawStage(job){if(!isCurrent(job))return false;const canvas=document.getElementById("stage"),ctx=canvas.getContext("2d");ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);const layout=computeLayout(job.left&&job.left.charmKey,job.right&&job.right.charmKey);if(job.metal!=="none"){const ring=await loadRing(job.metal);if(!isCurrent(job))return false;drawRing(ctx,ring,layout.ring);}for(const [sideIndex,b] of [job.left,job.right].entries()){if(!b)continue;const bitmap=await buildCharmBitmap(b);if(!isCurrent(job))return false;const p=layout.placements[sideIndex];if(!p)continue;ctx.drawImage(bitmap,p.x*LAYOUT.pxPerMmStage,p.y*LAYOUT.pxPerMmStage,bitmap.width*(LAYOUT.pxPerMmStage/CHARMS[b.charmKey].pxPerMm),bitmap.height*(LAYOUT.pxPerMmStage/CHARMS[b.charmKey].pxPerMm));}return true;}
+function drawCharm(ctx,bitmap,p,charm){const stage=LAYOUT.pxPerMmStage,toStage=stage/charm.pxPerMm,x=p.x*stage,y=p.y*stage,w=bitmap.width*toStage,h=bitmap.height*toStage;if(!charm.displayTiltDeg){ctx.drawImage(bitmap,x,y,w,h);return;}const fg=charm.fgBboxPx,cx=x+(fg.x+fg.w/2)*toStage,cy=y+(fg.y+fg.h/2)*toStage;ctx.save();ctx.translate(cx,cy);ctx.rotate(charm.displayTiltDeg*Math.PI/180);ctx.drawImage(bitmap,x-cx,y-cy,w,h);ctx.restore();}
+async function drawStage(job){if(!isCurrent(job))return false;const canvas=document.getElementById("stage"),ctx=canvas.getContext("2d");ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);const layout=computeLayout(job.left&&job.left.charmKey,job.right&&job.right.charmKey);if(job.metal!=="none"){const ring=await loadRing(job.metal);if(!isCurrent(job))return false;drawRing(ctx,ring,layout.ring);}for(const [sideIndex,b] of [job.left,job.right].entries()){if(!b)continue;const bitmap=await buildCharmBitmap(b);if(!isCurrent(job))return false;const p=layout.placements[sideIndex];if(!p)continue;drawCharm(ctx,bitmap,p,CHARMS[b.charmKey]);}return true;}
 async function requestRender(){const job=captureRenderJob(),loading=document.getElementById("loading");pinnedKeys=new Set([job.left,job.right].filter(Boolean).map(cacheKey));loading.classList.add("show");try{await drawStage(job);if(!isCurrent(job))return;runtimeStats.renderCount++;updateSummary();}catch(err){if(!isCurrent(job)){runtimeStats.staleJobErrors++;return;}console.error(err);const stage=document.getElementById("stage");stage.getContext("2d").clearRect(0,0,stage.width,stage.height);window.__copyLines=[];syncCopyButtons();document.getElementById("summaryText").innerHTML='<b>読み込みエラー</b> '+err.message;}finally{if(job.gen===renderGen)loading.classList.remove("show");}}
 function sideVariants(side){return side.charm==="none"?[]:CALF_VARIANTS.filter(v=>v.appliesToCharms.includes(side.charm));}
 function setSideCharm(which,key){state[which].charm=key;const vars=sideVariants(state[which]);if(!vars.some(v=>v.variantKey===state[which].variantKey))state[which].variantKey=vars[0]?.variantKey||"calf:ivory";renderSide(which);updateControls();requestRender();}
