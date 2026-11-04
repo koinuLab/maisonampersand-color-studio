@@ -56,6 +56,13 @@ html,body{background:var(--page)}
 </style><style>.masthead>div:first-child{flex:0 0 100%;width:100%}
 .brand{display:flex;align-items:center;justify-content:center;height:1.15em}
 .brand-logo{display:block;width:14.75em;max-width:100%;height:auto}</style>
+<style>.credit{margin-top:44px;padding-top:22px;border-top:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--muted)}
+.credit-line{display:flex;align-items:center;justify-content:center;gap:9px;margin:0}
+.credit-label{font-family:"Times New Roman",Tinos,serif;font-size:15px;letter-spacing:.04em;line-height:1;white-space:nowrap}
+.credit img{display:block;width:auto}
+.credit-maison{height:15px}
+.credit-supported{height:15px}
+.credit-supported.is-dark{height:26px;border-radius:6px}</style>
 <meta name="robots" content="noindex,nofollow">
 </head>
 <body>
@@ -77,6 +84,10 @@ html,body{background:var(--page)}
     
   </aside>
 </main>
+<footer class="credit" aria-label="クレジット">
+  <p class="credit-line"><span class="credit-label">color direction by</span><img class="credit-maison" src="../credit/maison-logo.png" alt="MAISON &amp;."></p>
+  <p class="credit-line"><img class="credit-supported" src="../credit/supported-by-light.png" alt="// supported by KoinuLab"></p>
+</footer>
 
 </div>
 <script>
